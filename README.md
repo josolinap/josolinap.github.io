@@ -1,4 +1,4 @@
-#M y personal GitHub Pages site
+# My personal GitHub Pages site
 # josolinap.github.io
 
 Personal site powered by **React + Vite + Supabase + AI**.  
