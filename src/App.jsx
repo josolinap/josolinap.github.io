@@ -47,7 +47,8 @@ function App() {
       const response = await processCommand(userMessage);
       addMessage('ai', response);
     } catch (error) {
-      addMessage('ai', `Error: ${error.message}`);
+      console.error('Command processing error:', error);
+      addMessage('ai', `I encountered an error: ${error.message}. Please try a different command or check the console for details.`);
     } finally {
       setIsLoading(false);
     }
