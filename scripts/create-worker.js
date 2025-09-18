@@ -59,7 +59,7 @@ const workerCode = `export default {
 
       // Forward the request to Gemini API
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${env.GEMINI_API_KEY}`,
+        \`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=\${env.GEMINI_API_KEY}\`,
         {
           method: 'POST',
           headers: {
@@ -68,6 +68,20 @@ const workerCode = `export default {
           body: JSON.stringify(requestBody),
         }
       );
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        return new Response(JSON.stringify({
+          error: \`Gemini API error: \${response.status} \${response.statusText}\`,
+          details: errorData
+        }), {
+          status: response.status,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+          },
+        });
+      }
 
       const data = await response.json();
 
@@ -78,7 +92,11 @@ const workerCode = `export default {
         },
       });
     } catch (error) {
-      return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      console.error('Worker error:', error);
+      return new Response(JSON.stringify({
+        error: 'Internal server error',
+        details: error.message
+      }), {
         status: 500,
         headers: {
           'Access-Control-Allow-Origin': '*',
@@ -97,18 +115,18 @@ const deployInstructions = `# Cloudflare Worker Deployment
 
 ## Prerequisites
 - Cloudflare account
-- Wrangler CLI: `npm install -g wrangler`
+- Wrangler CLI: \`npm install -g wrangler\`
 
 ## Setup
-1. Edit `wrangler.toml` and replace `your-gemini-api-key-here` with your actual Gemini API key
-2. Login to Cloudflare: `wrangler auth login`
-3. Deploy: `wrangler deploy`
+1. Edit \`wrangler.toml\` and replace \`your-gemini-api-key-here\` with your actual Gemini API key
+2. Login to Cloudflare: \`wrangler auth login\`
+3. Deploy: \`wrangler deploy\`
 4. Copy the worker URL and add it to your .env file as VITE_WORKER_URL
 
 ## Commands
-- Deploy: `wrangler deploy`
-- View logs: `wrangler tail`
-- Delete: `wrangler delete`
+- Deploy: \`wrangler deploy\`
+- View logs: \`wrangler tail\`
+- Delete: \`wrangler delete\`
 `;
 
 fs.writeFileSync(path.join(workerDir, 'README.md'), deployInstructions);

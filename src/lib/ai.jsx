@@ -52,15 +52,39 @@ ${text}
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error("API Error:", response.status, errorBody);
+      let errorMessage = `API request failed with status ${response.status}`;
+      let shouldFallback = false;
 
-      // If it's a CORS or network error, provide fallback
-      if (response.status === 0 || response.status === 403 || response.status === 429) {
+      try {
+        const errorJson = JSON.parse(errorBody);
+        if (errorJson.error) {
+          errorMessage = errorJson.error;
+        }
+        if (errorJson.details) {
+          console.error("API Error details:", errorJson.details);
+        }
+
+        // If the worker indicates it's a Gemini API error, determine if we should fallback
+        if (errorJson.error && errorJson.error.includes('Gemini API error')) {
+          const status = parseInt(errorJson.error.split(' ')[4]); // Extract status from "Gemini API error: 500 Internal Server Error"
+          if (status === 429 || status === 403) {
+            shouldFallback = true;
+          }
+        }
+      } catch (e) {
+        // Not JSON, use raw error body
+        errorMessage += `: ${errorBody}`;
+      }
+
+      console.error("API Error:", response.status, errorMessage);
+
+      // If it's a CORS or network error, or rate limit/quota exceeded, provide fallback
+      if (response.status === 0 || response.status === 403 || response.status === 429 || shouldFallback) {
         console.log('API error detected, using fallback analysis');
         return getFallbackAnalysis(text);
       }
 
-      throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
+      throw new Error(errorMessage);
     }
 
     const result = await response.json();
