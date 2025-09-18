@@ -46,4 +46,3 @@ npm run dev
 5. Deploy to GitHub Pages
 npm run build
 npm run deploy
-

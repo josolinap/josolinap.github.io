@@ -1,44 +1,47 @@
-
-
----
-
-# 📋 `TODO.md`
-
-```markdown
-# Project TODOs
-
-This file tracks the development roadmap for `josolinap.github.io`.  
-Use it with AI in VSCode to generate and complete features step by step.
-
----
+# TODO — AI Notes + 3D Website
 
 ## ✅ Done
-- [x] Set up Supabase project + `notes` table.  
-- [x] Created GitHub Pages repo with custom domain `josolinap.dedyn.io`.  
+- [x] Set up Vite + React app
+- [x] Installed Supabase client
+- [x] Created `notes` table in Supabase
+- [x] Connected frontend to Supabase
+- [x] Installed Gemini CLI
+- [x] Scaffolded `src/lib/ai.js` and hooked into Gemini API
+- [x] Displayed first note + AI analysis in `App.jsx`
 
 ---
 
-## ⏩ Next Steps
-- [ ] Initialize Vite + React project in the repo.  
-- [ ] Install Supabase client (`@supabase/supabase-js`).  
-- [ ] Connect to Supabase and fetch random notes.  
-- [ ] Display floating notes in the middle of the screen.  
+## 🔜 Next Steps
+
+### Phase 1 — Core AI flow
+- [x] Fix `ai.js` to use `VITE_GEMINI_API_KEY` (✅ in local dev, ⚠️ insecure for production)
+- [x] Improve AI output parsing → structured JSON (summary, keywords, sentiment)
+- [x] Add error handling + loading states in UI
+- [x] Add a button to re-analyze a random note
+
+### Phase 2 — Visual layer
+- [x] Install `@react-three/fiber` and `@react-three/drei`
+- [x] Create a `<Scene />` component with a rotating 3D object or text
+- [x] Animate AI keywords → floating around the object, fading in/out
+- [x] Clickable keywords → if note has a link → open in new tab; else → show as popup
+
+### Phase 3 — CMS-like control
+- [x] Add ability to insert new notes via frontend → saves to Supabase
+- [x] Auto-refresh scene when new note is added
+- [x] Add categories/tags → group notes visually
+- [x] Add a “surprise me” mode → AI picks a random note
+
+### Phase 4 — Deployment
+- [ ] Set up custom domain `josolinap.dedyn.io`
+- [ ] Decide hosting: GitHub Pages (static) vs. Netlify (serverless proxy support)
+- [ ] If GitHub Pages → move AI call to serverless proxy (Cloudflare Workers, Netlify Functions, or Supabase Edge Functions)
+- [- ] Hide Gemini API key in serverless function (no client exposure)
+- [ ] Deploy 🚀
 
 ---
 
-## 📈 Future Enhancements
-- [ ] Style floating notes (fade in/out, random position, animations).  
-- [ ] If `note.link` exists → make note clickable, opening blog/project in a new tab.  
-- [ ] Integrate AI (Google Gemini / OpenAI / Groq) to:
-  - [ ] Analyze notes and generate summaries.  
-  - [ ] Suggest related ideas.  
-- [ ] Add an admin UI (protected) to add/edit/delete notes directly.  
-- [ ] Expand notes system into categories (blog, project, idea, quote).  
-- [ ] Add 3D/generated background (Three.js or Canvas).  
-
----
-
-## 🧩 Stretch Goals
-- [ ] Offline-first mode (cache notes in browser).  
-- [ ] User authentication (Supabase Auth) for private note editing.  
-- [ ] Integration with n8n for automation (auto-post notes from RSS/Twitter/etc.).  
+## 🛠️ Future Ideas
+- [x] Sentiment-based coloring of words (positive = green, negative = red)
+- [ ] Export daily AI summaries of notes
+- [ ] Voice synthesis (notes read out loud)
+- [ ] VR/AR view of floating notes
