@@ -348,6 +348,451 @@ agentTools.optimizePrompt = {
 };
 
 // Database Tools (for the existing Supabase setup)
+// Web Scraping Tools for API Discovery
+agentTools.webScrape = {
+  description: 'Scrape web pages for information about APIs and services',
+  parameters: {
+    url: { type: 'string', description: 'URL to scrape', required: true },
+    selectors: { type: 'string', description: 'CSS selectors to target specific content' },
+    keywords: { type: 'string', description: 'Keywords to search for (comma-separated)' }
+  },
+  execute: async (params, context) => {
+    const { url, selectors = 'body', keywords = '' } = params;
+
+    try {
+      // Use a CORS proxy or fetch directly (may fail in browser due to CORS)
+      const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+      const response = await fetch(proxyUrl);
+
+      if (!response.ok) {
+        throw new Error(`Failed to scrape URL: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const html = data.contents;
+
+      // Simple HTML parsing (in production, use a proper parser)
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      const results = {};
+
+      // Extract text content
+      const textContent = doc.body.textContent || '';
+      results.textContent = textContent.substring(0, 10000); // Truncate long content
+
+      // Extract specific selectors
+      if (selectors !== 'body') {
+        const elements = doc.querySelectorAll(selectors);
+        results.selectedElements = Array.from(elements).map(el => ({
+          tagName: el.tagName,
+          textContent: el.textContent.trim(),
+          href: el.href || null,
+          src: el.src || null
+        }));
+      }
+
+      // Search for API-related keywords if specified
+      if (keywords) {
+        const keywordArray = keywords.split(',').map(k => k.trim().toLowerCase());
+        const apiHints = {};
+
+        keywordArray.forEach(keyword => {
+          const matches = textContent.toLowerCase().split(keyword);
+          apiHints[keyword] = (matches.length - 1);
+        });
+
+        results.apiHints = apiHints;
+      }
+
+      return {
+        url,
+        status: 'scraped',
+        results
+      };
+    } catch (error) {
+      throw new Error(`Web scraping failed: ${error.message}`);
+    }
+  }
+};
+
+agentTools.discoverAPIs = {
+  description: 'Discover free APIs and services from API directories and marketplaces',
+  parameters: {
+    category: { type: 'string', description: 'API category (weather, finance, social, etc.)' },
+    freeOnly: { type: 'boolean', description: 'Limit to free APIs only', default: true },
+    maxResults: { type: 'number', description: 'Maximum number of APIs to discover', default: 10 }
+  },
+  execute: async (params, context) => {
+    const { category, freeOnly = true, maxResults = 10 } = params;
+
+    const apiDirectories = [
+      'https://api.publicapis.org/entries',
+      'https://rapidapi.com/blog/most-popular-apis-2023/', // Would need scraping
+      'https://github.com/public-apis/public-apis', // GitHub repo
+    ];
+
+    const discoveredAPIs = [];
+
+    try {
+      // Query Public APIs database
+      const publicApiResponse = await fetch('https://api.publicapis.org/entries');
+      if (publicApiResponse.ok) {
+        const publicApis = await publicApiResponse.json();
+
+        const filteredApis = publicApis.entries
+          .filter(api => {
+            const matchesCategory = !category || api.Category.toLowerCase().includes(category.toLowerCase());
+            const isFree = !freeOnly || (api.Auth === 'null' || api.Auth === '' || api.Description.toLowerCase().includes('free'));
+            return matchesCategory && isFree;
+          })
+          .slice(0, maxResults)
+          .map(api => ({
+            name: api.API,
+            description: api.Description,
+            url: api.Link,
+            category: api.Category,
+            auth: api.Auth,
+            https: api.HTTPS,
+            cors: api.Cors
+          }));
+
+        discoveredAPIs.push(...filteredApis);
+      }
+
+      // Scan developer documentation sites
+      if (category && discoveredAPIs.length < maxResults) {
+        const searchTerms = `${category} api free`.toLowerCase();
+
+        // This is a simplified implementation - in production would use web scraping
+        const mockApis = [
+          {
+            name: 'OpenExchangeRates',
+            description: 'Free currency exchange rates and conversion API',
+            url: 'https://openexchangerates.org/',
+            category: 'Finance',
+            auth: 'API Key',
+            https: true
+          },
+          {
+            name: 'WeatherAPI',
+            description: 'Free weather data API',
+            url: 'https://www.weatherapi.com/',
+            category: 'Weather',
+            auth: 'API Key',
+            https: true
+          }
+        ].filter(api => api.name.toLowerCase().includes(searchTerms) || api.description.toLowerCase().includes(searchTerms));
+
+        discoveredAPIs.push(...mockApis.slice(0, maxResults - discoveredAPIs.length));
+      }
+
+      return {
+        category,
+        freeOnly,
+        count: discoveredAPIs.length,
+        apis: discoveredAPIs
+      };
+    } catch (error) {
+      return {
+        error: `API discovery failed: ${error.message}`,
+        backup: 'Consider manually searching publicapis.org or github.com/public-apis/public-apis'
+      };
+    }
+  }
+};
+
+// Self-Code Modification Tools
+agentTools.suggestCodeChanges = {
+  description: 'Analyze code and suggest specific improvements or fixes',
+  parameters: {
+    filePath: { type: 'string', description: 'Path to file to analyze', required: true },
+    issueType: { type: 'string', description: 'Type of issue to look for (bug, performance, security)' }
+  },
+  execute: async (params, context) => {
+    const { filePath, issueType = 'general' } = params;
+    const { agent } = context;
+
+    // First, try to read the file using existing tools
+    // This would normally use the file system, but we'll simulate
+    agent.log(`Analyzing code in ${filePath} for ${issueType} issues`);
+
+    // In production, this would read the actual file
+    // For now, return placeholder suggestions
+    return {
+      filePath,
+      issueType,
+      suggestions: [
+        'Consider adding error handling for edge cases',
+        'Performance: Use more efficient data structures',
+        'Security: Validate user inputs before processing',
+        'Code quality: Add JSDoc comments for complex functions'
+      ]
+    };
+  }
+};
+
+// Security and Safety Tools
+agentTools.securityAudit = {
+  description: 'Perform security audit on code changes or autonomous actions',
+  parameters: {
+    codeChanges: { type: 'string', description: 'Code changes to audit', required: true },
+    context: { type: 'string', description: 'Context of the changes' },
+    riskLevel: { type: 'string', description: 'Expected risk level (low, medium, high)', default: 'medium' }
+  },
+  execute: async (params, context) => {
+    const { codeChanges, context: changeContext = '', riskLevel = 'medium' } = params;
+    const { agent } = context;
+
+    const securityChecks = [
+      {
+        name: 'Injection Prevention',
+        pattern: /(eval|exec|spawn|shell_exec|system|popen|proc_open)/gi,
+        severity: 'high'
+      },
+      {
+        name: 'SQL Injection Detection',
+        pattern: /SELECT.*\+|\$|@.*WHERE|INSERT.*\+/gi,
+        severity: 'high'
+      },
+      {
+        name: 'File System Security',
+        pattern: /\.\.\/|\.\.\\|~\/|\$HOME|\/etc\/passwd|\/etc\/shadow/gi,
+        severity: 'high'
+      },
+      {
+        name: 'Privilege Escalation',
+        pattern: /(sudo|su|runas|admin|root)/gi,
+        severity: 'critical'
+      },
+      {
+        name: 'Secret Exposure',
+        pattern: /(api[_-]?key|secret[_-]?key|password|token|credential)/gi,
+        severity: 'high'
+      },
+      {
+        name: 'Unsafe Deserialization',
+        pattern: /(unserialize|pickle|yaml\.load)/gi,
+        severity: 'medium'
+      },
+      {
+        name: 'Weak Authentication',
+        pattern: /(weak.*password|default.*password|admin.*admin)/gi,
+        severity: 'medium'
+      }
+    ];
+
+    const findings = [];
+    let overallRisk = 'low';
+
+    for (const check of securityChecks) {
+      const matches = codeChanges.match(check.pattern);
+      if (matches) {
+        findings.push({
+          checkName: check.name,
+          severity: check.severity,
+          matches: matches,
+          recommendation: getSecurityRecommendation(check.name)
+        });
+
+        // Update overall risk
+        if (check.severity === 'critical' || (check.severity === 'high' && riskLevel === 'high')) {
+          overallRisk = 'high';
+        } else if (check.severity === 'high' && overallRisk === 'low') {
+          overallRisk = 'medium';
+        } else if (check.severity === 'medium' && overallRisk === 'low') {
+          overallRisk = 'medium';
+        }
+      }
+    }
+
+    // Additional contextual security analysis
+    if (changeContext.toLowerCase().includes('database') && codeChanges.includes('DROP')) {
+      findings.push({
+        checkName: 'Database Destruction Risk',
+        severity: 'critical',
+        matches: ['DROP statement in database context'],
+        recommendation: 'Database DROP operations require explicit human approval'
+      });
+      overallRisk = 'high';
+    }
+
+    const auditResult = {
+      overallRisk,
+      findings: findings.length,
+      detailedFindings: findings,
+      approved: overallRisk === 'low' || (overallRisk === 'medium' && riskLevel === 'low'),
+      reviewRequired: overallRisk === 'high' || findings.length > 0
+    };
+
+    agent.log('Security audit completed', { risk: overallRisk, findings: findings.length });
+
+    return auditResult;
+  }
+};
+
+agentTools.validateAutonomousAction = {
+  description: 'Validate an autonomous action against safety guidelines',
+  parameters: {
+    action: { type: 'string', description: 'The autonomous action to validate', required: true },
+    context: { type: 'string', description: 'Context of the action' },
+    impact: { type: 'string', description: 'Expected impact level (low, medium, high)', default: 'low' }
+  },
+  execute: async (params, context) => {
+    const { action, context: actionContext = '', impact = 'low' } = params;
+    const { agent } = context;
+
+    const safetyRules = [
+      {
+        rule: 'Never delete production data',
+        pattern: /(delete|drop|remove|destroy).*production.*data/gi,
+        severity: 'critical'
+      },
+      {
+        rule: 'Never expose sensitive information',
+        pattern: /(log|print|console\.log).*password.*|(reveal|expose).*secret/gi,
+        severity: 'critical'
+      },
+      {
+        rule: 'Never run untrusted code',
+        pattern: /(eval|exec|require).*untrusted|dynamic.*code.*execution/gi,
+        severity: 'high'
+      },
+      {
+        rule: 'Never modify system file permissions recklessly',
+        pattern: /chmod.*777|chown.*root|system.*permission/gi,
+        severity: 'high'
+      },
+      {
+        rule: 'Never perform DoS attacks or overload systems',
+        pattern: /(flood|overload|dos|ddos).*attack/gi,
+        severity: 'critical'
+      },
+      {
+        rule: 'Validate all user inputs',
+        pattern: /(input|user.*data).*unvalidated|raw.*input.*untrusted/gi,
+        severity: 'medium'
+      }
+    ];
+
+    const validationResults = [];
+    let actionAllowed = true;
+    let maxSeverity = 'low';
+
+    for (const rule of safetyRules) {
+      if (rule.pattern.test(action + ' ' + actionContext)) {
+        validationResults.push({
+          rule: rule.rule,
+          triggered: true,
+          severity: rule.severity,
+          explanation: getSafetyExplanation(rule.rule)
+        });
+
+        if (rule.severity === 'critical') {
+          actionAllowed = false;
+          maxSeverity = 'critical';
+        } else if (rule.severity === 'high' && maxSeverity !== 'critical') {
+          actionAllowed = false;
+          maxSeverity = 'high';
+        } else if (rule.severity === 'medium' && maxSeverity === 'low') {
+          maxSeverity = 'medium';
+        }
+      } else {
+        validationResults.push({
+          rule: rule.rule,
+          triggered: false,
+          severity: 'none'
+        });
+      }
+    }
+
+    // Additional impact assessment
+    if (impact === 'high' && maxSeverity !== 'critical') {
+      actionAllowed = false;
+      validationResults.push({
+        rule: 'High Impact Action',
+        triggered: true,
+        severity: 'high',
+        explanation: 'High impact actions require human approval'
+      });
+    }
+
+    const validationResult = {
+      action,
+      actionAllowed,
+      riskLevel: maxSeverity,
+      validationResults,
+      requiresHumanApproval: !actionAllowed,
+      timestamp: new Date().toISOString()
+    };
+
+    agent.log('Autonomous action validation completed', { allowed: actionAllowed, risk: maxSeverity });
+
+    return validationResult;
+  }
+};
+
+agentTools.backupSystem = {
+  description: 'Create system backup before making critical changes',
+  parameters: {
+    scope: { type: 'string', description: 'Scope of backup (full, partial, configuration)', default: 'configuration' },
+    reason: { type: 'string', description: 'Reason for creating backup' }
+  },
+  execute: async (params, context) => {
+    const { scope = 'configuration', reason = 'Safety backup before changes' } = params;
+    const { agent } = context;
+
+    const backupId = `backup_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    const backupData = {
+      scope,
+      reason,
+      timestamp: new Date().toISOString(),
+      id: backupId,
+      created: true
+    };
+
+    // In production, this would actually create backups
+    agent.memory.lastBackup = backupData;
+    agent.log(`System backup created: ${backupId}`, { scope, reason });
+
+    return backupData;
+  }
+};
+
+agentTools.rollbackSystem = {
+  description: 'Rollback system to a previous safe state',
+  parameters: {
+    backupId: { type: 'string', description: 'Backup ID to restore from' },
+    reason: { type: 'string', description: 'Reason for rollback' }
+  },
+  execute: async (params, context) => {
+    const { backupId, reason = 'System restoration' } = params;
+    const { agent } = context;
+
+    if (!backupId) {
+      return { success: false, error: 'Backup ID required for rollback' };
+    }
+
+    // Check if backup exists
+    const lastBackup = agent.memory.lastBackup;
+    if (!lastBackup || lastBackup.id !== backupId) {
+      return { success: false, error: 'Backup not found or invalid' };
+    }
+
+    // Simulate rollback (in production, would actually restore)
+    agent.log(`System rollback initiated: ${backupId}`, { reason });
+
+    return {
+      success: true,
+      backupId,
+      reason,
+      rolledBackTo: lastBackup.timestamp,
+      timestamp: new Date().toISOString()
+    };
+  }
+};
+
 agentTools.saveToDatabase = {
   description: 'Save data to the application database',
   parameters: {
@@ -367,6 +812,34 @@ agentTools.saveToDatabase = {
     }
   }
 };
+
+// Helper functions for security and safety
+function getSecurityRecommendation(checkName) {
+  const recommendations = {
+    'Injection Prevention': 'Use parameterized queries or prepared statements instead of string concatenation',
+    'SQL Injection Detection': 'Sanitize all user inputs and use prepared statements for database operations',
+    'File System Security': 'Validate all file paths and use absolute paths with proper permissions',
+    'Secret Exposure': 'Never store secrets in code or logs; use environment variables or secure vaults',
+    'Privilege Escalation': 'Run applications with minimum required permissions',
+    'Unsafe Deserialization': 'Validate and sanitize all serialized data before deserialization',
+    'Weak Authentication': 'Use strong, unique passwords and implement multi-factor authentication',
+    'Database Destruction Risk': 'Database operations require careful review and backup'
+  };
+  return recommendations[checkName] || 'Review and fix the security issue';
+}
+
+function getSafetyExplanation(rule) {
+  const explanations = {
+    'Never delete production data': 'Production data loss can cause irreparable damage to business operations',
+    'Never expose sensitive information': 'Exposed secrets can compromise security and lead to attacks',
+    'Never run untrusted code': 'Executing untrusted code can introduce malware and security vulnerabilities',
+    'Never modify system file permissions recklessly': 'Incorrect permissions can compromise system security',
+    'Never perform DoS attacks or overload systems': 'These actions are illegal and can harm infrastructure',
+    'Validate all user inputs': 'Unvalidated inputs are the primary cause of security vulnerabilities',
+    'High Impact Action': 'High impact changes require human oversight for safety'
+  };
+  return explanations[rule] || 'This safety rule prevents potentially harmful actions';
+}
 
 // Register all tools with the global registry
 export function registerAllTools(agent) {

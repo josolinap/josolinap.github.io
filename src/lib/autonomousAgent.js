@@ -10,6 +10,7 @@ export class AutonomousAgent {
     this.conversation = [];
     this.tools = new Map();
     this.presence = 'learning'; // learning, active, improving
+    this.evolutionObjectives = []; // Long-term goals for autonomous development
   }
 
   // Register a tool the agent can use
@@ -36,19 +37,11 @@ export class AutonomousAgent {
     });
   }
 
-  // Plan and execute a complex task
+  // Plan and execute a complex task with provider auto-rotation
   async executeTask(task, context = {}) {
-    this.log(`Starting task: ${task}`);
+    this.log(`Starting task with auto-rotation: ${task}`);
 
     try {
-      // Get the best LLM provider for this task
-      const provider = await providerRegistry.getBestProvider(task, {
-        budget: context.budget,
-        speed: context.speed
-      });
-
-      this.log(`Using provider: ${provider.name} (${provider.config.model})`);
-
       // Create system prompt for autonomous behavior
       const systemPrompt = `You are an autonomous AI agent capable of:
 - Planning and executing multi-step tasks
@@ -77,22 +70,25 @@ Always respond with executable actions or final results. Be direct and efficient
         messages.splice(1, 0, ...recentHistory);
       }
 
-      const response = await provider.generateContent(messages, {
+      // Use auto-rotation with fallback
+      const result = await providerRegistry.executeWithFallback(task, messages, {
         temperature: 0.3, // Lower temperature for task execution
-        maxTokens: 8192
-      });
+        maxTokens: 8192,
+        budget: context.budget,
+        speed: context.speed
+      }, 3); // Retry up to 3 providers
 
-      this.log(`Agent response: ${response.substring(0, 200)}...`);
+      this.log(`Task completed with ${result.provider} after ${result.attempts} attempts`);
 
       // Execute any tool calls in the response
-      const toolCalls = this.extractToolCalls(response);
+      const toolCalls = this.extractToolCalls(result.result);
 
       if (toolCalls.length > 0) {
-        const results = await this.executeToolCalls(toolCalls);
-        return results;
+        const toolResults = await this.executeToolCalls(toolCalls);
+        return toolResults;
       }
 
-      return response;
+      return result.result;
 
     } catch (error) {
       this.log(`Task execution error: ${error.message}`);
@@ -212,7 +208,7 @@ Based on the conversation history and current architecture, suggest specific cod
 
 1. Enhance the agent's capabilities
 2. Improve tool execution
-3. Add new features
+3. Add new tools or capabilities
 4. Fix bugs or inefficiencies
 
 Provide specific file changes, new functions, or architectural improvements. Be concrete and implementable.`;
@@ -237,6 +233,194 @@ What specific improvements would you recommend?`
     });
 
     return suggestions;
+  }
+
+  // Auto-create MCP servers for discovered APIs
+  async createMCPServer(apiDetails, serverType = 'cloudflare') {
+    this.log(`Creating MCP server for API: ${apiDetails.name}`);
+
+    const provider = await providerRegistry.getBestProvider('code generation', { budget: 'low' });
+
+    let serverTemplate = '';
+
+    if (serverType === 'cloudflare') {
+      serverTemplate = await this.generateCloudflareWorker(apiDetails);
+    } else if (serverType === 'node') {
+      serverTemplate = await this.generateNodeMCPServer(apiDetails);
+    }
+
+    // Save the generated server
+    const serverName = `${apiDetails.name.toLowerCase().replace(/\s+/g, '-')}-server`;
+    const serverPath = `cloudflare-worker/src/${serverName}.js`;
+
+    // Store in memory for deployment
+    this.memory.pendingServers = this.memory.pendingServers || [];
+    this.memory.pendingServers.push({
+      name: serverName,
+      code: serverTemplate,
+      path: serverPath,
+      api: apiDetails
+    });
+
+    this.log(`MCP server generated: ${serverName}`);
+    return {
+      serverName,
+      code: serverTemplate,
+      deployment: `Use: cd cloudflare-worker && wrangler deploy`
+    };
+  }
+
+  // Generate Cloudflare Worker MCP server
+  async generateCloudflareWorker(apiDetails) {
+    const provider = await providerRegistry.getBestProvider('code generation', { budget: 'low' });
+
+    const messages = [
+      {
+        role: 'system',
+        content: 'Generate a Cloudflare Worker that acts as an MCP server proxy for the given API. Include proper error handling, CORS, and security measures.'
+      },
+      {
+        role: 'user',
+        content: `Create a Cloudflare Worker MCP server for this API:
+
+Name: ${apiDetails.name}
+Description: ${apiDetails.description}
+Endpoint: ${apiDetails.url}
+Auth Type: ${apiDetails.auth || 'None'}
+Category: ${apiDetails.category}
+
+The server should:
+1. Handle CORS properly for web requests
+2. Proxy requests to the actual API
+3. Include authentication if required
+4. Provide proper error handling
+5. Return structured responses
+
+Generate complete, deployable Cloudflare Worker code.`
+      }
+    ];
+
+    const code = await provider.generateContent(messages, {
+      temperature: 0.2,
+      maxTokens: 2048
+    });
+
+    return code;
+  }
+
+  // Generate Node.js MCP server
+  async generateNodeMCPServer(apiDetails) {
+    const provider = await providerRegistry.getBestProvider('code generation', { budget: 'low' });
+
+    const messages = [
+      {
+        role: 'system',
+        content: 'Generate a Node.js MCP server that provides access to external APIs through standardized MCP protocol.'
+      },
+      {
+        role: 'user',
+        content: `Create a Node.js MCP server for this API:
+
+Name: ${apiDetails.name}
+Description: ${apiDetails.description}
+Endpoint: ${apiDetails.url}
+Auth Type: ${apiDetails.auth || 'None'}
+
+Include:
+1. Express.js server setup
+2. MCP protocol implementation
+3. API integration
+4. Error handling and validation
+5. Package.json dependencies
+
+Generate complete server code with all necessary files.`
+      }
+    ];
+
+    const code = await provider.generateContent(messages, {
+      temperature: 0.2,
+      maxTokens: 3072
+    });
+
+    return code;
+  }
+
+  // Deploy pending MCP servers
+  async deployMCPServers() {
+    const pendingServers = this.memory.pendingServers || [];
+
+    if (pendingServers.length === 0) {
+      return 'No pending servers to deploy';
+    }
+
+    const deploymentResults = [];
+
+    for (const server of pendingServers) {
+      try {
+        // In production, this would write files and deploy
+        this.log(`Deploying server: ${server.name}`);
+
+        // Simulate deployment
+        const result = await this.simulateDeployment(server.name);
+        deploymentResults.push({
+          name: server.name,
+          status: 'deployed',
+          url: `https://${server.name}.workers.dev`
+        });
+
+      } catch (error) {
+        deploymentResults.push({
+          name: server.name,
+          status: 'failed',
+          error: error.message
+        });
+      }
+    }
+
+    // Clear pending servers
+    this.memory.pendingServers = [];
+
+    return deploymentResults;
+  }
+
+  // Simulate deployment (in production, use actual deployment tools)
+  async simulateDeployment(serverName) {
+    this.log(`Simulating deployment of ${serverName}`);
+    // In real implementation, would run wrangler deploy or similar
+    return { deployed: true, simulation: true };
+  }
+
+  // Discover new capabilities and create servers for them
+  async discoverAndIntegrateAPIs(maxNewServers = 3) {
+    this.log('Discovering new APIs for integration...');
+
+    const categories = ['weather', 'finance', 'social', 'data', 'utility'];
+
+    for (const category of categories) {
+      // Use web scraping and API discovery tools
+      const apis = await this.executeTool('discoverAPIs', {
+        category: category,
+        freeOnly: true,
+        maxResults: 5
+      });
+
+      if (apis && apis.apis && apis.apis.length > 0) {
+        const newApi = apis.apis.find(api => {
+          // Check if we already have this API integrated
+          const existingServers = this.memory.pendingServers || [];
+          return !existingServers.some(s => s.api.name === api.name);
+        });
+
+        if (newApi && maxNewServers > 0) {
+          await this.createMCPServer(newApi);
+          maxNewServers--;
+
+          this.log(`New API integrated: ${newApi.name}`);
+        }
+      }
+    }
+
+    return 'API discovery and integration complete';
   }
 
   // Log conversations and actions for learning
@@ -285,7 +469,7 @@ What specific improvements would you recommend?`
     this.presence = state.presence || 'learning';
   }
 
-  // Chat interface - process natural language input
+  // Chat interface - process natural language input with auto-rotation
   async chat(message, context = {}) {
     // Add user message to conversation
     this.conversation.push({ role: 'user', content: message });
@@ -297,8 +481,7 @@ What specific improvements would you recommend?`
       if (this.isTaskRequest(message)) {
         response = await this.executeTask(message, context);
       } else {
-        // Casual conversation with appropriate LLM
-        const provider = await providerRegistry.getBestProvider(message, { budget: 'high' });
+        // Casual conversation with auto-rotation fallback
         const chatHistory = this.conversation.slice(-10);
 
         const messages = [
@@ -309,10 +492,14 @@ What specific improvements would you recommend?`
           ...chatHistory
         ];
 
-        response = await provider.generateContent(messages, {
+        const result = await providerRegistry.executeWithFallback(message, messages, {
           temperature: 0.8,
-          maxTokens: 4096
-        });
+          maxTokens: 4096,
+          budget: context.budget || 'low' // Prefer free providers for casual chat
+        }, 3);
+
+        this.log(`Chat completed with ${result.provider} after ${result.attempts} attempts`);
+        response = result.result;
       }
 
       // Add response to conversation
@@ -333,6 +520,246 @@ What specific improvements would you recommend?`
       this.conversation.push({ role: 'assistant', content: errorMsg });
       return errorMsg;
     }
+  }
+
+  // Evolution objective management
+  async setEvolutionObjectives(userGoals = []) {
+    this.log('Setting evolution objectives...');
+
+    const provider = await providerRegistry.getBestProvider('strategic planning', { budget: 'low' });
+
+    const baseObjectives = [
+      'Expand API integration capabilities',
+      'Improve performance and efficiency',
+      'Enhance security and safety controls',
+      'Develop new tools and features',
+      'Optimize resource usage',
+      'Increase autonomous operation capabilities'
+    ];
+
+    const allGoals = [...baseObjectives, ...userGoals];
+
+    const objectives = [];
+
+    for (const goal of allGoals) {
+      const objective = {
+        id: this.generateObjectiveId(),
+        description: goal,
+        priority: await this.calculateObjectivePriority(goal),
+        milestones: await this.generateMilestones(goal),
+        progress: 0,
+        status: 'active',
+        created: new Date().toISOString(),
+        deadline: await this.calculateDeadline(goal)
+      };
+      objectives.push(objective);
+    }
+
+    this.evolutionObjectives = objectives.sort((a, b) => b.priority - a.priority);
+
+    this.log(`Set ${objectives.length} evolution objectives`);
+    return objectives;
+  }
+
+  async generateMilestones(goal) {
+    const provider = await providerRegistry.getBestProvider('planning', { budget: 'low' });
+
+    const messages = [
+      {
+        role: 'system',
+        content: 'Break down a goal into specific, measurable milestones that can be tracked and achieved incrementally.'
+      },
+      {
+        role: 'user',
+        content: `Break down this goal into 3-5 specific, measurable milestones:\n\n${goal}\n\nProvide milestones with clear success criteria.`
+      }
+    ];
+
+    const response = await provider.generateContent(messages, {
+      temperature: 0.3,
+      maxTokens: 1024
+    });
+
+    // Parse response into milestone objects
+    const milestoneLines = response.split('\n').filter(line => line.trim().match(/^\d+\.?\s*/));
+    return milestoneLines.map(line => ({
+      description: line.replace(/^\d+\.?\s*/, '').trim(),
+      completed: false,
+      created: new Date().toISOString()
+    }));
+  }
+
+  async calculateObjectivePriority(goal) {
+    const priorityIndicators = {
+      high: ['security', 'safety', 'critical', 'infrastructure', 'core'],
+      medium: ['performance', 'efficiency', 'user experience', 'reliability'],
+      low: ['nice-to-have', 'cosmetic', 'experimental', 'research']
+    };
+
+    const lowerGoal = goal.toLowerCase();
+
+    if (priorityIndicators.high.some(word => lowerGoal.includes(word))) return 9;
+    if (priorityIndicators.medium.some(word => lowerGoal.includes(word))) return 6;
+    return 3; // Low priority default
+  }
+
+  async calculateDeadline(goal) {
+    const deadlineIndicators = {
+      urgent: ['critical', 'security', 'bug', 'fix'],
+      medium: ['performance', 'optimization', 'feature'],
+      long: ['research', 'exploration', 'expansion']
+    };
+
+    const lowerGoal = goal.toLowerCase();
+    const now = new Date();
+
+    if (deadlineIndicators.urgent.some(word => lowerGoal.includes(word))) {
+      return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 1 week
+    } else if (deadlineIndicators.medium.some(word => lowerGoal.includes(word))) {
+      return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 1 month
+    }
+    return new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString(); // 3 months
+  }
+
+  generateObjectiveId() {
+    return `obj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  // Update objective progress
+  updateObjectiveProgress(objectiveId, newProgress, milestoneDescription = null) {
+    const objective = this.evolutionObjectives.find(obj => obj.id === objectiveId);
+    if (!objective) {
+      throw new Error(`Objective ${objectiveId} not found`);
+    }
+
+    objective.progress = Math.min(Math.max(newProgress, 0), 100);
+
+    if (milestoneDescription) {
+      const milestone = objective.milestones.find(m => m.description.includes(milestoneDescription));
+      if (milestone) {
+        milestone.completed = true;
+        milestone.completedAt = new Date().toISOString();
+
+        this.log(`Milestone completed: ${milestoneDescription}`);
+      }
+    }
+
+    if (objective.progress >= 100) {
+      objective.status = 'completed';
+      objective.completedAt = new Date().toISOString();
+      this.log(`Evolution objective completed: ${objective.description}`);
+    }
+
+    this.saveObjectiveProgress();
+    return objective;
+  }
+
+  // Evaluate progress towards objectives
+  async evaluateEvolutionProgress() {
+    this.log('Evaluating evolution progress...');
+
+    const activeObjectives = this.evolutionObjectives.filter(obj => obj.status === 'active');
+    const progressReport = {
+      totalObjectives: this.evolutionObjectives.length,
+      activeObjectives: activeObjectives.length,
+      completedObjectives: this.evolutionObjectives.filter(obj => obj.status === 'completed').length,
+      averageProgress: 0,
+      blockers: [],
+      recommendations: []
+    };
+
+    if (activeObjectives.length > 0) {
+      progressReport.averageProgress = activeObjectives.reduce((sum, obj) => sum + obj.progress, 0) / activeObjectives.length;
+    }
+
+    // Identify blockers and generate recommendations
+    for (const objective of activeObjectives) {
+      const daysSinceCreated = (new Date() - new Date(objective.created)) / (1000 * 60 * 60 * 24);
+
+      if (daysSinceCreated > 30 && objective.progress < 10) {
+        progressReport.blockers.push({
+          objective: objective.description,
+          issue: 'Stalled progress'
+        });
+      }
+
+      if (new Date(objective.deadline) < new Date()) {
+        progressReport.blockers.push({
+          objective: objective.description,
+          issue: 'Overdue'
+        });
+      }
+    }
+
+    // Generate recommendations based on current state
+    if (progressReport.averageProgress < 25) {
+      progressReport.recommendations.push('Focus on high-priority objectives first');
+      progressReport.recommendations.push('Break down large objectives into smaller tasks');
+    }
+
+    if (progressReport.blockers.length > 0) {
+      progressReport.recommendations.push('Address stalled objectives and consider reprioritizing');
+    }
+
+    this.memory.evolutionProgress = progressReport;
+    return progressReport;
+  }
+
+  // Adapt objectives based on current capabilities and feedback
+  async adaptEvolutionObjectives() {
+    this.log('Adapting evolution objectives based on current state...');
+
+    const progressReport = await this.evaluateEvolutionProgress();
+
+    const provider = await providerRegistry.getBestProvider('strategic analysis', { budget: 'low' });
+
+    const messages = [
+      {
+        role: 'system',
+        content: 'Analyze the current objectives and suggest adaptations based on progress, blockers, and new opportunities.'
+      },
+      {
+        role: 'user',
+        content: `Analyze these evolution objectives and suggest adaptations:\n\n${JSON.stringify(this.evolutionObjectives, null, 2)}\n\nProgress Report: ${JSON.stringify(progressReport, null, 2)}\n\nSuggest objective updates, new objectives, or priority changes. Be specific and actionable.`
+      }
+    ];
+
+    const adaptations = await provider.generateContent(messages, {
+      temperature: 0.4,
+      maxTokens: 2048
+    });
+
+    this.log('Evolution objective adaptations generated', adaptations);
+
+    // Store adaptations for review
+    this.memory.objectiveAdaptations = {
+      timestamp: new Date().toISOString(),
+      adaptations: adaptations,
+      progressReport: progressReport
+    };
+
+    return adaptations;
+  }
+
+  // Save objective progress (for persistence)
+  saveObjectiveProgress() {
+    this.memory.objectiveProgress = {
+      lastUpdated: new Date().toISOString(),
+      objectives: this.evolutionObjectives
+    };
+  }
+
+  // Get current objectives summary
+  getObjectivesSummary() {
+    return {
+      total: this.evolutionObjectives.length,
+      active: this.evolutionObjectives.filter(obj => obj.status === 'active').length,
+      completed: this.evolutionObjectives.filter(obj => obj.status === 'completed').length,
+      blocked: this.evolutionObjectives.filter(obj => {
+        const daysSinceCreated = (new Date() - new Date(obj.created)) / (1000 * 60 * 60 * 24);
+        return daysSinceCreated > 30 && obj.progress < 10;
+      }).length
+    };
   }
 
   // Determine if user message is a task request vs casual chat

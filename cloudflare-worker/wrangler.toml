@@ -4,3 +4,5 @@ compatibility_date = "2024-01-01"
 
 [vars]
 GEMINI_API_KEY = "AIzaSyBkSDxO_ZuMAhCFmN6TGsaGBudxndPCKws"
+SUPABASE_URL = "https://nqmxvnaecoxgwmzuzfyj.supabase.co"
+SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5xbXh2bmFlY294Z3dtenV6ZnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MzExMTUsImV4cCI6MjA3MDQwNzExNX0.hcpwOCbtaNPTWA7LOeodfvIFYS_qwJ7Z7LXot_oPYYA"

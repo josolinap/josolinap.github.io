@@ -11,7 +11,11 @@
     "preview": "vite preview",
     "deploy": "npm run build && gh-pages -d dist",
     "deploy:setup": "node scripts/setup-deployment.js",
-    "worker:create": "node scripts/create-worker.js"
+    "worker:create": "node scripts/create-worker.js",
+    "deploy:auto": "gh workflow run autonomous-deployment.yml",
+    "improve:auto": "node -e \"require('./src/lib/autonomousAgent.js').globalAgent.analyzePerformance()\"",
+    "servers:deploy": "cd cloudflare-worker && wrangler deploy",
+    "api:discover": "node -e \"require('./src/lib/autonomousAgent.js').globalAgent.discoverAndIntegrateAPIs()\""
   },
   "dependencies": {
     "@react-three/drei": "^10.7.6",

@@ -1,0 +1,28 @@
+# Deployment Configuration
+
+# Environment variables for deployment
+DEPLOY_ENV=production
+ENABLE_AUTONOMOUS_IMPROVEMENTS=true
+ALLOW_API_INTEGRATION=true
+SECURITY_SCAN_LEVEL=moderate
+
+# GitHub Actions secrets (manually configured):
+# CLOUDFLARE_API_TOKEN - Cloudflare API token for worker deployment
+# GEMINI_API_KEY - API key for agent improvements
+# SUPABASE_URL - Database URL for state persistence
+# NPM_TOKEN - For publishing packages (if needed)
+
+# Monitoring thresholds
+MAX_DEPLOYMENT_TIME=600  # seconds
+ERROR_THRESHOLD=5  # maximum errors before rollback
+PERFORMANCE_DEGRADATION_THRESHOLD=10  # percentage
+
+# Autonomous improvement settings
+IMPROVEMENT_INTERVAL=86400  # 24 hours in seconds
+MAX_CONCURRENT_IMPROVEMENTS=3
+HUMAN_REVIEW_THRESHOLD=high  # when to require human approval
+
+# Resource discovery settings
+API_DISCOVERY_CATEGORIES=weather,finance,social,data,utility
+MAX_NEW_INTEGRATIONS_PER_CYCLE=5
+FREE_API_PRIORITY=true
