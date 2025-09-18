@@ -284,6 +284,157 @@ agentTools.retrieveFromMemory = {
   }
 };
 
+// GitHub Integration Tools
+agentTools.githubSearch = {
+  description: 'Search GitHub repositories for similar projects and best practices',
+  parameters: {
+    query: { type: 'string', description: 'Search query', required: true },
+    language: { type: 'string', description: 'Programming language filter' },
+    minStars: { type: 'number', description: 'Minimum stars required', default: 50 },
+    maxResults: { type: 'number', description: 'Maximum results to return', default: 20 }
+  },
+  execute: async (params, context) => {
+    const { query, language, minStars = 50, maxResults = 20 } = params;
+    const { agent } = context;
+
+    try {
+      let searchQuery = `${query} stars:>${minStars}`;
+      if (language) {
+        searchQuery += ` language:${language}`;
+      }
+
+      const response = await agent.executeTool('httpRequest', {
+        url: `https://api.github.com/search/repositories?q=${encodeURIComponent(searchQuery)}&sort=stars&order=desc&per_page=${maxResults}`,
+        method: 'GET',
+        headers: {
+          'Accept': 'application/vnd.github+v3+json'
+        }
+      });
+
+      if (response.status !== 200) {
+        throw new Error(`GitHub API error: ${response.status}`);
+      }
+
+      const data = JSON.parse(response.data);
+      const repos = data.items.map(repo => ({
+        name: repo.name,
+        full_name: repo.full_name,
+        description: repo.description,
+        url: repo.html_url,
+        stars: repo.stargazers_count,
+        language: repo.language,
+        last_updated: repo.updated_at,
+        owner: repo.owner.login,
+        topics: repo.topics || []
+      }));
+
+      agent.log(`Found ${repos.length} relevant GitHub repositories for "${query}"`);
+
+      // Store discovered repositories for future analysis
+      agent.memory.discoveredProjects = agent.memory.discoveredProjects || [];
+      agent.memory.discoveredProjects.push({
+        searchQuery,
+        timestamp: new Date().toISOString(),
+        repositories: repos
+      });
+
+      return {
+        query,
+        totalCount: data.total_count,
+        repositories: repos,
+        searchQuery,
+        bestMatches: repos.slice(0, 5) // Highlight top 5
+      };
+    } catch (error) {
+      agent.log(`GitHub search failed: ${error.message}`);
+      return { error: `GitHub search failed: ${error.message}` };
+    }
+  }
+};
+
+agentTools.githubRepoAnalyze = {
+  description: 'Analyze a specific GitHub repository for code patterns and best practices',
+  parameters: {
+    repoFullName: { type: 'string', description: 'Full repository name (owner/repo)', required: true },
+    analysisType: { type: 'string', description: 'Type of analysis (code, architecture, security, etc.)', default: 'code' }
+  },
+  execute: async (params, context) => {
+    const { repoFullName, analysisType = 'code' } = params;
+    const { agent } = context;
+
+    try {
+      agent.log(`Analyzing GitHub repository: ${repoFullName}`);
+
+      // Get repository information
+      const repoResponse = await agent.executeTool('httpRequest', {
+        url: `https://api.github.com/repos/${repoFullName}`,
+        method: 'GET',
+        headers: {
+          'Accept': 'application/vnd.github+v3+json'
+        }
+      });
+
+      if (repoResponse.status !== 200) {
+        throw new Error(`Repository not found or API error`);
+      }
+
+      const repoData = JSON.parse(repoResponse.data);
+
+      // Get repository contents
+      const contentsResponse = await agent.executeTool('httpRequest', {
+        url: `https://api.github.com/repos/${repoFullName}/contents`,
+        method: 'GET',
+        headers: {
+          'Accept': 'application/vnd.github+v3+json'
+        }
+      });
+
+      const contents = JSON.parse(contentsResponse.data);
+
+      const analysis = {
+        repository: {
+          name: repoData.name,
+          description: repoData.description,
+          stars: repoData.stargazers_count,
+          last_updated: repoData.updated_at,
+          language: repoData.language,
+          topics: repoData.topics || []
+        },
+        files: contents.slice(0, 10).map(file => ({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          download_url: file.download_url
+        })),
+        analysis: {}
+      };
+
+      // Perform specific analysis based on type
+      if (analysisType === 'architecture') {
+        analysis.analysis.architecture = await analyzeRepoArchitecture(contents, agent, repoData);
+      } else if (analysisType === 'security') {
+        analysis.analysis.security = await analyzeRepoSecurity(contents, agent, repoData);
+      } else if (analysisType === 'code') {
+        analysis.analysis.code = await analyzeRepoCode(contents, agent, repoData);
+      }
+
+      // Store analysis for learning
+      agent.memory.repoAnalyses = agent.memory.repoAnalyses || [];
+      agent.memory.repoAnalyses.push({
+        repoName: repoFullName,
+        analysisType,
+        timestamp: new Date().toISOString(),
+        insights: analysis.analysis
+      });
+
+      return analysis;
+    } catch (error) {
+      agent.log(`Repository analysis failed: ${error.message}`);
+      return { error: `Analysis failed: ${error.message}` };
+    }
+  }
+};
+
 // Self-Improvement Tools
 agentTools.analyzeConversation = {
   description: 'Analyze conversation history for improvements',
@@ -317,24 +468,55 @@ agentTools.analyzeConversation = {
 };
 
 agentTools.optimizePrompt = {
-  description: 'Optimize system prompts for better performance',
+  description: 'Optimize system prompts using advanced prompt engineering techniques',
   parameters: {
     currentPrompt: { type: 'string', description: 'Current system prompt', required: true },
-    taskType: { type: 'string', description: 'Type of task this prompt is used for' }
+    taskType: { type: 'string', description: 'Type of task this prompt is used for' },
+    optimizationLevel: { type: 'string', description: 'Optimization level (basic, advanced, expert)', default: 'advanced' }
   },
   execute: async (params, context) => {
-    const { currentPrompt, taskType } = params;
+    const { currentPrompt, taskType, optimizationLevel = 'advanced' } = params;
+    const { agent } = context;
 
     const provider = await context.providerRegistry.getBestProvider('prompt engineering', { speed: 'fast' });
 
+    // Advanced prompt engineering framework
+    let optimizationPrompt = '';
+
+    switch (optimizationLevel) {
+      case 'expert':
+        optimizationPrompt = `You are a master prompt engineering specialist. Use advanced techniques including:
+- Role definition with specific expertise
+- Task decomposition with clear steps
+- Contextual grounding
+- Output formatting instructions
+- Error handling and edge cases
+- Performance optimization techniques
+- Domain-specific terminologies
+- Psychological trigger words for better responses
+
+Analyze the current prompt for weaknesses and create a comprehensive optimization.`;
+        break;
+
+      case 'advanced':
+        optimizationPrompt = `You are an expert prompt engineer. Optimize using:
+- Clear role and context definition
+- Specific task instructions with examples
+- Output format specifications
+- Error handling scenarios
+- Performance considerations
+- Best practices from the field`;
+        break;
+
+      default:
+        optimizationPrompt = 'You are a prompt engineering specialist. Optimize prompts for clarity, specificity, and effectiveness.';
+    }
+
     const messages = [
-      {
-        role: 'system',
-        content: 'You are an expert prompt engineer. Optimize prompts for clarity, specificity, and effectiveness.'
-      },
+      { role: 'system', content: optimizationPrompt },
       {
         role: 'user',
-        content: `Optimize this system prompt for ${taskType || 'general'} tasks:\n\n${currentPrompt}\n\nProvide an improved version with explanations.`
+        content: `Optimize this ${taskType || 'general'} purpose system prompt (${optimizationLevel} level):\n\nCurrent Prompt:\n${currentPrompt}\n\nProvide the optimized version with detailed explanations of improvements and why each change enhances performance.`
       }
     ];
 
@@ -343,7 +525,166 @@ agentTools.optimizePrompt = {
       maxTokens: 2048
     });
 
+    // Store optimization for learning
+    agent.memory.promptOptimizations = agent.memory.promptOptimizations || [];
+    agent.memory.promptOptimizations.push({
+      original: currentPrompt,
+      optimized: optimizedPrompt,
+      taskType: taskType,
+      timestamp: new Date().toISOString(),
+      optimizationLevel: optimizationLevel
+    });
+
+    agent.log(`Prompt optimized (${optimizationLevel}) for ${taskType || 'general'} tasks`);
     return optimizedPrompt;
+  }
+};
+
+// Advanced Prompt Engineering Tools
+agentTools.createSystemPrompt = {
+  description: 'Create expert-level system prompts for specific use cases',
+  parameters: {
+    useCase: { type: 'string', description: 'The specific use case or task', required: true },
+    expertise: { type: 'string', description: 'Required expertise level', default: 'expert' },
+    constraints: { type: 'string', description: 'Constraints and requirements' },
+    examples: { type: 'boolean', description: 'Include examples and demonstrations', default: true }
+  },
+  execute: async (params, context) => {
+    const { useCase, expertise = 'expert', constraints, examples = true } = params;
+    const { agent } = context;
+
+    const provider = await context.providerRegistry.getBestProvider('prompt engineering', { budget: 'low' });
+
+    const messages = [
+      {
+        role: 'system',
+        content: `You are a master prompt engineering specialist with deep knowledge of:
+- Advanced prompt structures and techniques
+- Cognitive psychology for better AI responses
+- Domain expertise in various technical and creative fields
+- Performance optimization methods
+- Error prevention and handling techniques
+- Output formatting and serialization methods`
+      },
+      {
+        role: 'user',
+        content: `Create a comprehensive system prompt for: "${useCase}" at ${expertise} level.
+
+Requirements:
+- Specific role definition with expertise areas
+- Clear task breakdown and instructions
+- Performance expectations and metrics
+- Error handling and edge cases
+${constraints ? `- Constraints: ${constraints}` : ''}
+- Output formatting specifications
+${examples ? '- Include real-world examples and demonstrations' : ''}
+- Best practices and success criteria
+
+Provide the complete optimized prompt with detailed explanations of each component and why it improves AI performance.`
+      }
+    ];
+
+    const createdPrompt = await provider.generateContent(messages, {
+      temperature: 0.3,
+      maxTokens: 1536
+    });
+
+    // Store created prompt for future reuse
+    agent.memory.createdPrompts = agent.memory.createdPrompts || [];
+    agent.memory.createdPrompts.push({
+      useCase,
+      prompt: createdPrompt,
+      expertise,
+      timestamp: new Date().toISOString()
+    });
+
+    return {
+      prompt: createdPrompt,
+      useCase,
+      expertise,
+      created: new Date().toISOString()
+    };
+  }
+};
+
+agentTools.testPromptPerformance = {
+  description: 'Test and benchmark prompt performance across different scenarios',
+  parameters: {
+    prompt: { type: 'string', description: 'Prompt to test', required: true },
+    testScenarios: { type: 'array', description: 'Test scenarios to evaluate', required: true },
+    provider: { type: 'string', description: 'Specific provider to use for testing' }
+  },
+  execute: async (params, context) => {
+    const { prompt, testScenarios, provider } = params;
+    const { agent } = context;
+
+    const performanceResults = [];
+    const startTime = Date.now();
+
+    for (const scenario of testScenarios) {
+      try {
+        const testStart = Date.now();
+
+        // Get the specified provider or best available
+        const testProvider = provider ? { generateContent: (messages, options) => agent.providerRegistry.providers.get(provider).generateContent(messages, options) } :
+                                        await agent.providerRegistry.getBestProvider('prompt testing', { budget: 'low' });
+
+        const messages = [
+          { role: 'system', content: prompt },
+          { role: 'user', content: scenario.input }
+        ];
+
+        const response = await testProvider.generateContent(messages, {
+          temperature: scenario.temperature || 0.7,
+          maxTokens: scenario.maxTokens || 1024
+        });
+
+        const testEnd = Date.now();
+
+        // Evaluate response quality
+        const qualityScore = evaluatePromptResponse(response, scenario.expected);
+
+        performanceResults.push({
+          scenario: scenario.name,
+          input: scenario.input,
+          response: response,
+          responseTime: testEnd - testStart,
+          qualityScore: qualityScore,
+          tokensUsed: Math.ceil(response.length / 4), // Rough estimation
+          success: qualityScore >= (scenario.minScore || 60)
+        });
+
+      } catch (error) {
+        performanceResults.push({
+          scenario: scenario.name,
+          error: error.message,
+          success: false
+        });
+      }
+    }
+
+    const totalTime = Date.now() - startTime;
+    const averageQuality = performanceResults.filter(r => r.qualityScore).reduce((sum, r) => sum + r.qualityScore, 0) /
+                          performanceResults.filter(r => r.qualityScore).length;
+
+    const results = {
+      prompt,
+      totalExecutionTime: totalTime,
+      averageResponseTime: totalTime / performanceResults.length,
+      averageQualityScore: isNaN(averageQuality) ? 0 : Math.round(averageQuality),
+      successRate: performanceResults.filter(r => r.success).length / performanceResults.length,
+      scenariosTested: performanceResults.length,
+      detailedResults: performanceResults,
+      provider: provider || 'auto-selected'
+    };
+
+    // Store performance results for learning
+    agent.memory.promptPerformanceTests = agent.memory.promptPerformanceTests || [];
+    agent.memory.promptPerformanceTests.push(results);
+
+    agent.log(`Prompt performance test completed: ${results.averageQualityScore}% average quality`);
+
+    return results;
   }
 };
 
@@ -850,3 +1191,160 @@ export function registerAllTools(agent) {
 
 // Export tool names for reference
 export const availableTools = Object.keys(agentTools);
+
+// GitHub Repository Analysis Helper Functions
+async function analyzeRepoArchitecture(contents, agent, repoData) {
+  const provider = await agent.providerRegistry.getBestProvider('analysis', { budget: 'low' });
+
+  const messages = [
+    {
+      role: 'system',
+      content: 'Analyze repository structure and architecture. Identify patterns, frameworks, and design approaches.'
+    },
+    {
+      role: 'user',
+      content: `Analyze this repository's architecture:
+Repository: ${repoData.name}
+Description: ${repoData.description}
+Language: ${repoData.language}
+
+Contents: ${contents.map(f => f.name).join(', ')}
+
+Describe the likely architecture, frameworks used, and design patterns.`
+    }
+  ];
+
+  const analysis = await provider.generateContent(messages, {
+    temperature: 0.3,
+    maxTokens: 1024
+  });
+
+  return analysis;
+}
+
+async function analyzeRepoSecurity(contents, agent, repoData) {
+  const securityIndicators = {
+    good: ['eslint', 'prettier', '.gitignore', 'security', 'audit'],
+    concerning: ['eval', 'innerHTML', 'dangerouslySetInnerHTML', 'disable-eslint'],
+    vulnerable: ['old-package-lock', 'npm-audit-issues', 'security-vuln']
+  };
+
+  const securityAnalysis = {
+    score: 100,
+    findings: [],
+    recommendations: []
+  };
+
+  // Check for security indicators
+  const fileNames = contents.map(f => f.name.toLowerCase());
+
+  securityIndicators.good.forEach(indicator => {
+    if (fileNames.some(name => name.includes(indicator))) {
+      securityAnalysis.findings.push(`✓ Good: Found ${indicator} file`);
+    } else if (indicator !== 'eslint' && indicator !== 'prettier') { // These are optional
+      securityAnalysis.score -= 5;
+      securityAnalysis.recommendations.push(`Consider adding ${indicator}`);
+    }
+  });
+
+  securityIndicators.concerning.forEach(indicator => {
+    if (fileNames.some(name => name.includes(indicator))) {
+      securityAnalysis.findings.push(`⚠️ Concerning: Found ${indicator} usage`);
+      securityAnalysis.score -= 15;
+      securityAnalysis.recommendations.push(`Review and remove unsafe ${indicator} usage`);
+    }
+  });
+
+  securityAnalysis.overallAssesment = securityAnalysis.score >= 80 ? 'Good' :
+                                     securityAnalysis.score >= 60 ? 'Fair' : 'Needs Attention';
+
+  return securityAnalysis;
+}
+
+async function analyzeRepoCode(contents, agent, repoData) {
+  const provider = await agent.providerRegistry.getBestProvider('code analysis', { budget: 'low' });
+
+  // Get some code files for analysis
+  const codeFiles = contents.filter(f =>
+    f.name.endsWith('.js') ||
+    f.name.endsWith('.ts') ||
+    f.name.endsWith('.jsx') ||
+    f.name.endsWith('.tsx')
+  ).slice(0, 3); // Analyze up to 3 files
+
+  let codeAnalysis = `Analysis of ${repoData.name}:\n\n`;
+
+  for (const file of codeFiles) {
+    try {
+      const response = await agent.executeTool('httpRequest', {
+        url: file.download_url,
+        method: 'GET'
+      });
+
+      if (response.status === 200 && response.data && response.data.length < 50000) { // Limit file size
+        const codeLanguages = await provider.generateContent([
+          {
+            role: 'system',
+            content: 'Analyze the code quality, patterns, and provide improvement suggestions.'
+          },
+          {
+            role: 'user',
+            content: `Analyze this code file (${file.name}):\n\n${response.data.substring(0, 10000)}\n\nProvide code quality assessment and suggestions.`
+          }
+        ], { temperature: 0.3, maxTokens: 1024 });
+
+        codeAnalysis += `## ${file.name}\n\n${codeLanguages}\n\n---\n\n`;
+      }
+    } catch (error) {
+      codeAnalysis += `## ${file.name}\n\n❌ Failed to analyze: ${error.message}\n\n---\n\n`;
+    }
+  }
+
+  if (codeFiles.length === 0) {
+    codeAnalysis += 'No suitable code files found for analysis.';
+  }
+
+  return codeAnalysis;
+}
+
+// Helper function for prompt performance evaluation
+function evaluatePromptResponse(response, expectedOutcome) {
+  if (!expectedOutcome) return 70; // Default moderate score if no expectations
+
+  const responseLower = response.toLowerCase();
+  const expectedLower = expectedOutcome.toLowerCase();
+
+  let score = 50; // Base score
+
+  // Check for task completion indicators
+  const completionIndicators = ['completed', 'done', 'finished', 'success', 'implemented', 'generated'];
+  const hasCompletionIndicators = completionIndicators.some(indicator => responseLower.includes(indicator));
+
+  if (hasCompletionIndicators) score += 15;
+
+  // Check for structure and formatting
+  if (response.includes('```') || response.includes('|')) score += 10; // Code blocks or tables
+  if (response.includes('|') || response.match(/\d+\./g)) score += 5; // Lists or numbered items
+
+  // Check for specific expected content
+  const expectedWords = expectedLower.split(' ').filter(word => word.length > 3);
+  let wordsFound = 0;
+  expectedWords.forEach(word => {
+    if (responseLower.includes(word)) wordsFound++;
+  });
+
+  if (wordsFound > 0) {
+    score += Math.min(30, (wordsFound / expectedWords.length) * 30);
+  }
+
+  // Length appropriateness
+  if (response.length < 50) score -= 10; // Too short
+  if (response.length > 5000) score -= 10; // Too long
+
+  // Error detection
+  if (responseLower.includes('error') || responseLower.includes('failed')) {
+    score -= 20;
+  }
+
+  return Math.max(0, Math.min(100, Math.round(score)));
+}

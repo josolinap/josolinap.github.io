@@ -763,6 +763,300 @@ Generate complete server code with all necessary files.`
     };
   }
 
+  // Self-debugging capabilities
+  async selfDebug() {
+    this.log('Initiating self-debugging sequence...');
+
+    const debugReport = {
+      timestamp: new Date().toISOString(),
+      status: 'analyzing',
+      findings: [],
+      fixesApplied: [],
+      performance: {}
+    };
+
+    try {
+      // Check tool availability
+      const toolsCheck = await this.debugTools();
+      debugReport.findings.push(...toolsCheck.findings);
+
+      // Analyze conversation patterns
+      const conversationAnalysis = await this.analyzeConversationPatterns();
+      debugReport.findings.push(...conversationAnalysis.findings);
+
+      // Check provider health
+      const providerHealth = await this.debugProviders();
+      debugReport.findings.push(...providerHealth.findings);
+
+      // Analyze memory usage
+      const memoryAnalysis = await this.analyzeMemoryUsage();
+      debugReport.performance.memory = memoryAnalysis;
+
+      // Generate self-improvement suggestions
+      const suggestions = await this.generateSelfDebugSuggestions(debugReport);
+      debugReport.suggestions = suggestions;
+
+      debugReport.status = 'completed';
+
+      // Store debug report
+      this.memory.debugReports = this.memory.debugReports || [];
+      this.memory.debugReports.push(debugReport);
+
+      this.log('Self-debugging completed', { findings: debugReport.findings.length });
+
+      return debugReport;
+    } catch (error) {
+      debugReport.status = 'failed';
+      debugReport.error = error.message;
+      return debugReport;
+    }
+  }
+
+  async debugTools() {
+    const findings = [];
+
+    // Check for broken tools
+    for (const [toolName, tool] of this.tools.entries()) {
+      try {
+        if (!tool.execute || typeof tool.execute !== 'function') {
+          findings.push({
+            type: 'error',
+            category: 'tools',
+            message: `Tool ${toolName} is missing execute function`,
+            severity: 'high'
+          });
+        }
+
+        if (!tool.description) {
+          findings.push({
+            type: 'warning',
+            category: 'tools',
+            message: `Tool ${toolName} has no description`,
+            severity: 'low'
+          });
+        }
+      } catch (error) {
+        findings.push({
+          type: 'error',
+          category: 'tools',
+          message: `Tool ${toolName} analysis failed: ${error.message}`,
+          severity: 'medium'
+        });
+      }
+    }
+
+    if (this.tools.size === 0) {
+      findings.push({
+        type: 'error',
+        category: 'tools',
+        message: 'No tools registered with the agent',
+        severity: 'critical'
+      });
+    }
+
+    return { findings };
+  }
+
+  async debugProviders() {
+    const findings = [];
+    const providerStats = [...this.providerRegistry.providerStats.entries()];
+
+    for (const [providerName, stats] of providerStats) {
+      if (stats.healthScore < 0.5) {
+        findings.push({
+          type: 'warning',
+          category: 'providers',
+          message: `Provider ${providerName} has low health score (${stats.healthScore})`,
+          severity: 'medium'
+        });
+      }
+
+      if (stats.failedRequests > stats.totalRequests * 0.3) {
+        findings.push({
+          type: 'error',
+          category: 'providers',
+          message: `Provider ${providerName} has high failure rate`,
+          severity: 'high'
+        });
+      }
+    }
+
+    return { findings };
+  }
+
+  async analyzeConversationPatterns() {
+    const findings = [];
+    const recentConversations = this.conversation.slice(-20);
+
+    if (recentConversations.length < 3) {
+      findings.push({
+        type: 'info',
+        category: 'usage',
+        message: 'Low conversation activity - agent may need more interaction',
+        severity: 'low'
+      });
+    }
+
+    // Analyze response patterns
+    const assistantMessages = recentConversations.filter(msg => msg.role === 'assistant');
+    const errorResponses = assistantMessages.filter(msg => msg.content?.startsWith('Error') || msg.content?.startsWith('❌'));
+
+    if (errorResponses.length > assistantMessages.length * 0.5) {
+      findings.push({
+        type: 'error',
+        category: 'performance',
+        message: 'High error rate in responses - check provider configuration',
+        severity: 'high'
+      });
+    }
+
+    return { findings };
+  }
+
+  async analyzeMemoryUsage() {
+    const memoryStats = {
+      totalKeys: 0,
+      categories: {},
+      estimatedSize: 0
+    };
+
+    // Analyze memory usage by category
+    for (const [category, data] of Object.entries(this.memory)) {
+      const itemCount = typeof data === 'object' && data !== null ? Object.keys(data).length : 1;
+      memoryStats.totalKeys += itemCount;
+      memoryStats.categories[category] = itemCount;
+      memoryStats.estimatedSize += JSON.stringify(data).length;
+    }
+
+    // Check for excessive memory usage
+    if (memoryStats.estimatedSize > 5 * 1024 * 1024) { // 5MB
+      this.memory.cleanupSuggestions = this.memory.cleanupSuggestions || [];
+      this.memory.cleanupSuggestions.push({
+        timestamp: new Date().toISOString(),
+        message: 'High memory usage detected - consider cleanup'
+      });
+    }
+
+    return memoryStats;
+  }
+
+  async generateSelfDebugSuggestions(debugReport) {
+    const provider = await this.providerRegistry.getBestProvider('analysis', { budget: 'low' });
+
+    const suggestions = [];
+
+    if (debugReport.findings.some(f => f.category === 'providers' && f.severity === 'high')) {
+      suggestions.push('Review and configure API providers - check for missing keys or rate limits');
+    }
+
+    if (debugReport.findings.some(f => f.category === 'tools' && f.severity === 'high')) {
+      suggestions.push('Repair or re-register broken tools');
+    }
+
+    if (debugReport.findings.some(f => f.category === 'usage' && f.severity === 'low')) {
+      suggestions.push('Increase interaction to improve agent learning');
+    }
+
+    if (debugReport.performance?.memory?.estimatedSize > 1024 * 1024) { // 1MB
+      suggestions.push('Implement memory cleanup to reduce storage usage');
+    }
+
+    // Generate AI-powered suggestions for improvements
+    try {
+      const aiSuggestions = await provider.generateContent([
+        {
+          role: 'system',
+          content: 'Analyze debug findings and suggest specific improvements.'
+        },
+        {
+          role: 'user',
+          content: `Based on these debug findings, suggest specific improvements:\n\n${JSON.stringify(debugReport.findings, null, 2)}`
+        }
+      ], { temperature: 0.4, maxTokens: 512 });
+
+      suggestions.push(`AI Analysis: ${aiSuggestions}`);
+    } catch (error) {
+      // Fallback suggestions if AI analysis fails
+      suggestions.push('Debug system operational - review recent findings manually');
+    }
+
+    return suggestions;
+  }
+
+  // Autonomous learning from GitHub projects
+  async learnFromSimilarProjects(query, maxRepos = 5) {
+    this.log(`Learning from similar projects: "${query}"`);
+
+    try {
+      // Search for similar projects
+      const searchResults = await this.executeTool('githubSearch', {
+        query: query,
+        language: 'javascript',
+        minStars: 100,
+        maxResults: maxRepos
+      });
+
+      const learnings = [];
+
+      if (searchResults.repositories && searchResults.repositories.length > 0) {
+        for (const repo of searchResults.repositories.slice(0, 3)) { // Analyze top 3
+          try {
+            const analysis = await this.executeTool('githubRepoAnalyze', {
+              repoFullName: repo.full_name,
+              analysisType: 'architecture'
+            });
+
+            if (analysis && !analysis.error) {
+              // Extract insights for autonomous improvement
+              learnings.push({
+                repo: repo.full_name,
+                insights: analysis.analysis?.architecture || 'Analysis completed',
+                applicability: await this.evaluateInsightApplicability(analysis, this)
+              });
+            }
+          } catch (error) {
+            this.log(`Failed to analyze ${repo.full_name}: ${error.message}`);
+          }
+        }
+      }
+
+      // Store learnings for future improvements
+      this.memory.projectLearnings = this.memory.projectLearnings || [];
+      this.memory.projectLearnings.push({
+        query,
+        timestamp: new Date().toISOString(),
+        learnings: learnings
+      });
+
+      this.log(`Learned from ${learnings.length} projects`);
+      return { learnings, query };
+    } catch (error) {
+      this.log(`Learning from projects failed: ${error.message}`);
+      return { error: error.message };
+    }
+  }
+
+  async evaluateInsightApplicability(analysis, context) {
+    // Simple evaluation of how applicable insights are to this project
+    const applicability = {
+      score: 0.5, // Default moderate applicability
+      reasons: ['Project structure analysis completed']
+    };
+
+    // Evaluate based on project similarities
+    if (analysis.repository?.language === 'JavaScript') {
+      applicability.score += 0.2;
+      applicability.reasons.push('Same programming language');
+    }
+
+    if (analysis.repository?.topics?.includes('ai') || analysis.repository?.topics?.includes('ml')) {
+      applicability.score += 0.3;
+      applicability.reasons.push('Related to AI/ML domain');
+    }
+
+    return applicability;
+  }
+
   // Determine if user message is a task request vs casual chat
   isTaskRequest(message) {
     const taskIndicators = [
