@@ -11,11 +11,12 @@ agentTools.readFile = {
     startLine: { type: 'number', description: 'Starting line number (optional)' },
     endLine: { type: 'number', description: 'Ending line number (optional)' }
   },
-  execute: async (params) => {
+  execute: async (params, context) => {
     const { path, startLine, endLine } = params;
+    const serverUrl = context?.serverUrl || 'http://localhost:3001';
 
     try {
-      const response = await fetch('/api/read-file', {
+      const response = await fetch(`${serverUrl}/api/read-file`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path, startLine, endLine })
@@ -28,8 +29,7 @@ agentTools.readFile = {
       const data = await response.json();
       return data.content;
     } catch (error) {
-      // Fallback for browser environment - simulate file reading
-      throw new Error(`File reading not available in browser: ${error.message}`);
+      throw new Error(`Server file reading failed: ${error.message}`);
     }
   }
 };
@@ -40,24 +40,26 @@ agentTools.writeFile = {
     path: { type: 'string', description: 'File path to write', required: true },
     content: { type: 'string', description: 'Content to write to file', required: true }
   },
-  execute: async (params) => {
+  execute: async (params, context) => {
     const { path, content } = params;
+    const serverUrl = context?.serverUrl || 'http://localhost:3001';
 
     try {
-      const response = await fetch('/api/write-file', {
+      const response = await fetch(`${serverUrl}/api/write-file`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path, content })
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to write file: ${response.statusText}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to write file: ${response.statusText}`);
       }
 
-      return `File written successfully: ${path}`;
+      const data = await response.json();
+      return data.message;
     } catch (error) {
-      // Fallback for browser environment
-      throw new Error(`File writing not available in browser: ${error.message}`);
+      throw new Error(`Server file writing failed: ${error.message}`);
     }
   }
 };
@@ -67,11 +69,12 @@ agentTools.listDirectory = {
   parameters: {
     path: { type: 'string', description: 'Directory path to list', default: '.' }
   },
-  execute: async (params) => {
+  execute: async (params, context) => {
     const { path = '.' } = params;
+    const serverUrl = context?.serverUrl || 'http://localhost:3001';
 
     try {
-      const response = await fetch('/api/list-directory', {
+      const response = await fetch(`${serverUrl}/api/list-directory`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path })
@@ -82,10 +85,13 @@ agentTools.listDirectory = {
       }
 
       const data = await response.json();
-      return data.files.join('\n');
+      const formattedFiles = data.files.map(file =>
+        `${file.type === 'directory' ? '📁' : '📄'} ${file.name} (${file.size} bytes, ${new Date(file.modified).toLocaleDateString()})`
+      ).join('\n');
+
+      return formattedFiles;
     } catch (error) {
-      // Browser fallback
-      return 'Directory listing not available in browser environment';
+      throw new Error(`Server directory listing failed: ${error.message}`);
     }
   }
 };
@@ -178,13 +184,28 @@ agentTools.runCommand = {
     directory: { type: 'string', description: 'Working directory' }
   },
   execute: async (params, context) => {
-    // Note: In browser environment, commands can't actually be executed
-    // This would need a backend service to handle command execution
     const { command, directory } = params;
+    const serverUrl = context?.serverUrl || 'http://localhost:3001';
 
-    context.agent.log(`Simulating command execution: ${command}`, { directory });
+    context.agent.log(`Executing command via server: ${command}`, { directory });
 
-    return `Command execution not available in browser environment. Command would be: ${command} in ${directory || 'current directory'}`;
+    try {
+      const response = await fetch(`${serverUrl}/api/execute-command`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command, cwd: directory })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Command execution failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return `Command executed successfully!\nOutput: ${data.stdout}\n${data.stderr ? `Errors: ${data.stderr}` : ''}`;
+    } catch (error) {
+      throw new Error(`Command execution failed: ${error.message}`);
+    }
   }
 };
 
