@@ -581,10 +581,47 @@ export class LLMProviderRegistry {
   }
 }
 
+// Mock Provider (always works for testing and fallback)
+export class MockProvider extends LLMProvider {
+  constructor(config) {
+    super('mock', {
+      model: 'mock-ai',
+      ...config
+    });
+  }
+
+  async generateContent(messages, options = {}) {
+    // Simple mock responses based on input
+    const lastMessage = messages[messages.length - 1];
+    const userInput = lastMessage?.content?.toLowerCase() || '';
+
+    let response = 'I understand you said: ' + lastMessage?.content || 'Hello! This is a fallback mock AI response.';
+
+    if (userInput.includes('hello') || userInput.includes('hi')) {
+      response = 'Hello! How can I help you today? 🤖';
+    } else if (userInput.includes('create') || userInput.includes('build')) {
+      response = 'I can help you create that! What specific details would you like me to include?';
+    } else if (userInput.includes('analyze') || userInput.includes('check')) {
+      response = 'I\'m analyzing that for you. Here are my findings... (Mock analysis complete)';
+    } else if (userInput.includes('help')) {
+      response = 'I\'m here to help! I can:\n• Create React components\n• Analyze code\n• Write documentation\n• Generate ideas\n• Learn from our conversation\n\nWhat would you like me to do?';
+    }
+
+    return response;
+  }
+
+  getCostEstimate(tokens) {
+    return 0; // Free
+  }
+}
+
 // Initialize registry with environment providers
 export const providerRegistry = new LLMProviderRegistry();
 
-// Always register free providers (no API keys needed)
+// Always register mock provider as fallback (always works)
+providerRegistry.register(new MockProvider());
+
+// Always register HuggingFace provider (free, no API key needed)
 providerRegistry.register(new HuggingFaceProvider({
   model: import.meta.env.VITE_HUGGINGFACE_MODEL || 'microsoft/DialoGPT-medium',
   apiKey: import.meta.env.VITE_HUGGINGFACE_API_KEY || '' // Optional

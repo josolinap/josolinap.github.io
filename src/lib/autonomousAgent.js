@@ -2,6 +2,7 @@
 // Self-improving AI that can execute tasks, modify code, and learn
 
 import { providerRegistry } from './providers.js';
+import { memoryPersistence } from './supabaseClient.js';
 
 export class AutonomousAgent {
   constructor(memory = {}) {

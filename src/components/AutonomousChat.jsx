@@ -5,6 +5,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { globalAgent } from '../lib/autonomousAgent.js';
 import { registerAllTools } from '../lib/tools.js';
 import { providerRegistry } from '../lib/providers.js';
+import { memoryPersistence } from '../lib/supabaseClient.js';
 import './AutonomousChat.css';
 
 const AutonomousChat = () => {
@@ -210,6 +211,117 @@ const AutonomousChat = () => {
     }
   };
 
+  const handleDiscoverAPIs = async () => {
+    setIsTyping(true);
+    try {
+      const apiResults = await globalAgent.executeTool('discoverAPIs', {
+        category: 'weather',
+        freeOnly: true,
+        maxResults: 5
+      });
+
+      let responseText = '## 🔍 API Discovery Results\n\n';
+      if (apiResults && apiResults.apis && apiResults.apis.length > 0) {
+        responseText += `Found ${apiResults.count} free APIs:\n\n`;
+        apiResults.apis.forEach(api => {
+          responseText += `**${api.name}**\n`;
+          responseText += `- ${api.description}\n`;
+          responseText += `- Category: ${api.category}\n`;
+          responseText += `- URL: ${api.url}\n`;
+          responseText += `- Auth: ${api.auth || 'None'}\n\n`;
+        });
+        responseText += `💡 I can create MCP servers for these APIs automatically. Would you like me to do that?`;
+      } else {
+        responseText += 'No suitable free APIs found in the weather category. Try other categories like "finance", "social", or "data".';
+      }
+
+      const discoveryMessage = {
+        role: 'assistant',
+        content: responseText,
+        timestamp: new Date().toISOString(),
+        isDiscovery: true
+      };
+
+      setMessages(prev => [...prev, discoveryMessage]);
+    } catch (error) {
+      const errorMessage = {
+        role: 'assistant',
+        content: `❌ API Discovery failed: ${error.message}`,
+        timestamp: new Date().toISOString(),
+        isError: true
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleEvolutionCheck = async () => {
+    setIsTyping(true);
+    try {
+      // Set some default objectives if none exist
+      if (globalAgent.evolutionObjectives.length === 0) {
+        await globalAgent.setEvolutionObjectives([
+          'Improve response accuracy',
+          'Learn user preferences',
+          'Expand knowledge base',
+          'Optimize performance'
+        ]);
+      }
+
+      const progressReport = await globalAgent.evaluateEvolutionProgress();
+
+      let responseText = '## 📈 Evolution Progress Report\n\n';
+
+      responseText += `### Objectives Status:\n`;
+      responseText += `- **Total:** ${progressReport.totalObjectives}\n`;
+      responseText += `- **Active:** ${progressReport.activeObjectives}\n`;
+      responseText += `- **Completed:** ${progressReport.completedObjectives}\n`;
+      responseText += `- **Blocked:** ${progressReport.blockers.length}\n`;
+      responseText += `- **Average Progress:** ${Math.round(progressReport.averageProgress)}%\n\n`;
+
+      if (progressReport.recommendations && progressReport.recommendations.length > 0) {
+        responseText += `### Recommendations:\n`;
+        progressReport.recommendations.forEach(rec => {
+          responseText += `- ${rec}\n`;
+        });
+        responseText += '\n';
+      }
+
+      if (globalAgent.evolutionObjectives.length > 0) {
+        responseText += `### Current Objectives:\n`;
+        globalAgent.evolutionObjectives.slice(0, 3).forEach(obj => {
+          responseText += `- **${obj.description}** (${obj.progress}% - ${obj.status})\n`;
+          if (obj.milestones.length > 0) {
+            const nextMilestone = obj.milestones.find(m => !m.completed);
+            if (nextMilestone) {
+              responseText += `  └ Next: ${nextMilestone.description}\n`;
+            }
+          }
+        });
+      }
+
+      const evolutionMessage = {
+        role: 'assistant',
+        content: responseText,
+        timestamp: new Date().toISOString(),
+        isEvolution: true
+      };
+
+      setMessages(prev => [...prev, evolutionMessage]);
+    } catch (error) {
+      const errorMessage = {
+        role: 'assistant',
+        content: `❌ Evolution check failed: ${error.message}`,
+        timestamp: new Date().toISOString(),
+        isError: true
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
   return (
     <div className="autonomous-chat">
       {/* Header */}
@@ -230,12 +342,30 @@ const AutonomousChat = () => {
             className="action-btn secondary"
             onClick={handleSuggestImprovement}
             disabled={isTyping}
+            title="Analyze conversation and suggest improvements"
           >
             🧠 Analyze
           </button>
           <button
+            className="action-btn info"
+            onClick={handleDiscoverAPIs}
+            disabled={isTyping}
+            title="Discover new APIs for integration"
+          >
+            🔍 API Discovery
+          </button>
+          <button
+            className="action-btn info"
+            onClick={handleEvolutionCheck}
+            disabled={isTyping}
+            title="Review evolution objectives and progress"
+          >
+            📈 Evolution
+          </button>
+          <button
             className="action-btn danger"
             onClick={clearConversation}
+            title="Clear conversation history"
           >
             🗑️ Clear
           </button>
