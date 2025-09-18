@@ -1,455 +1,335 @@
-/* Cybersecurity/AI Futuristic Interface Styles */
+/* Cyberpunk AI Interface - Professional Design */
 
-/* Full screen takeover - no bounds */
+/* Main app container */
 .cyberpunk-root {
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  position: relative;
-  background: radial-gradient(ellipse at center, #000B00 0%, #000000 100%);
-  background-size: 400% 400%;
-  animation: backgroundPulse 4s ease-in-out infinite;
-}
-
-/* Mystical pulsing background like motherboard LEDs */
-.cyberpunk-root::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(0, 255, 0, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 60% 40%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
-  animation: ledPulse 3s ease-in-out infinite alternate;
-}
-
-/* Additional background layers for depth */
-.cyberpunk-root::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    linear-gradient(45deg, transparent 30%, rgba(0, 255, 0, 0.02) 30%, rgba(0, 255, 0, 0.02) 70%, transparent 70%),
-    linear-gradient(-45deg, transparent 30%, rgba(0, 255, 255, 0.02) 30%, rgba(0, 255, 255, 0.02) 70%, transparent 70%);
-  animation: patternShift 8s ease-in-out infinite;
-}
-
-/* Pulsing background animations */
-@keyframes backgroundPulse {
-  0%, 100% {
-    background-position: 0% 0%;
-  }
-  25% {
-    background-position: 200% 0%;
-  }
-  50% {
-    background-position: 200% 200%;
-  }
-  75% {
-    background-position: 0% 200%;
-  }
-}
-
-@keyframes ledPulse {
-  0% { opacity: 0.1; }
-  50% { opacity: 0.3; }
-  100% { opacity: 0.1; }
-}
-
-@keyframes patternShift {
-  0% { transform: translateX(0) translateY(0); }
-  100% { transform: translateX(-50px) translateY(-50px); }
-}
-
-/* Floating particles effect */
-.floating-particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.particle {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: rgba(0, 255, 0, 0.8);
-  border-radius: 50%;
-  animation: particleFloat 6s ease-in-out infinite;
-}
-
-.particle:nth-child(1) { left: 10%; animation-delay: 0s; }
-.particle:nth-child(2) { left: 20%; animation-delay: -1s; }
-.particle:nth-child(3) { left: 30%; animation-delay: -2s; }
-.particle:nth-child(4) { left: 40%; animation-delay: -3s; }
-.particle:nth-child(5) { left: 50%; animation-delay: -4s; }
-.particle:nth-child(6) { left: 60%; animation-delay: -5s; }
-.particle:nth-child(7) { left: 70%; animation-delay: -6s; }
-.particle:nth-child(8) { left: 80%; animation-delay: -7s; }
-
-@keyframes particleFloat {
-  0% {
-    opacity: 0;
-    transform: translateY(100vh) scale(0);
-  }
-  10% {
-    opacity: 1;
-    transform: translateY(80vh) scale(1);
-  }
-  90% {
-    opacity: 1;
-    transform: translateY(20vh) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(0) scale(0);
-  }
-}
-
-/* Main AI Interface Container */
-.ai-interface {
-  position: relative;
-  z-index: 10;
   width: 100vw;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
-  box-sizing: border-box;
+  padding: 20px;
+  background: transparent;
 }
 
-.ai-core {
-  position: relative;
-  width: 600px;
-  height: 400px;
-  border: 2px solid rgba(0, 255, 0, 0.3);
-  border-radius: 15px;
-  background: rgba(0, 20, 0, 0.8);
+/* Main interface card */
+.ai-interface {
+  width: 100%;
+  max-width: 800px;
+  height: 90vh;
+  background: rgba(10, 10, 15, 0.95);
+  border: 1px solid var(--cyber-green);
+  border-radius: 16px;
   box-shadow:
-    0 0 50px rgba(0, 255, 0, 0.2),
-    inset 0 0 50px rgba(0, 255, 0, 0.1);
-  animation: coreGlow 3s ease-in-out infinite alternate;
-}
-
-@keyframes coreGlow {
-  0% { box-shadow: 0 0 50px rgba(0, 255, 0, 0.2), inset 0 0 50px rgba(0, 255, 0, 0.1); }
-  100% { box-shadow: 0 0 80px rgba(0, 255, 0, 0.4), inset 0 0 80px rgba(0, 255, 0, 0.2); }
-}
-
-/* LED Status Indicators */
-.status-leds {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
+    0 0 40px rgba(0, 255, 136, 0.1),
+    inset 0 0 40px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
   display: flex;
-  gap: 20px;
+  flex-direction: column;
+  position: relative;
+  backdrop-filter: blur(10px);
 }
 
-.status-led {
-  width: 8px;
-  height: 8px;
-  background: rgba(0, 255, 0, 0.6);
-  border-radius: 50%;
-  animation: ledBlink 2s ease-in-out infinite;
+/* Header with title */
+.ai-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+  background: linear-gradient(135deg, rgba(0, 20, 0, 0.2) 0%, rgba(0, 0, 20, 0.2) 100%);
 }
 
-.status-led:nth-child(2) { animation-delay: -0.5s; }
-.status-led:nth-child(3) { animation-delay: -1s; }
-
-@keyframes ledBlink {
-  0%, 50% { opacity: 0.6; }
-  51%, 100% { opacity: 1; }
-}
-
-/* AI Title */
 .ai-title {
-  position: absolute;
-  top: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #00ff00;
-  font-size: 1.2rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-  font-family: 'Courier New', monospace;
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 10px rgba(0, 255, 136, 0.5);
 }
 
 .ai-subtitle {
-  position: absolute;
-  bottom: -40px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(0, 255, 255, 0.8);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  text-align: center;
+  opacity: 0.8;
+  font-weight: 300;
 }
 
-/* Chat Interface */
-.chat-container {
+/* Main content area */
+.ai-content {
+  flex: 1;
   padding: 20px;
-  height: 100%;
   display: flex;
   flex-direction: column;
+  gap: 20px;
 }
 
+/* Chat container */
+.chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: rgba(5, 5, 8, 0.8);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Chat messages area */
 .chat-messages {
   flex: 1;
+  padding: 16px;
   overflow-y: auto;
-  margin-bottom: 15px;
-  padding: 10px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(0, 255, 0, 0.2);
-  border-radius: 8px;
-  max-height: 250px;
+  max-height: 400px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 255, 136, 0.3) transparent;
 }
 
+.chat-messages::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 136, 0.3);
+  border-radius: 2px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: var(--cyber-green);
+}
+
+/* Message bubbles */
 .chat-message {
-  margin: 5px 0;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-family: 'Courier New', monospace;
-  font-size: 0.9em;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  max-width: 75%;
+  word-wrap: break-word;
+  position: relative;
 }
 
 .chat-message.user {
-  background: rgba(0, 255, 0, 0.1);
-  color: #00ff00;
-  margin-left: 20px;
-  text-align: right;
-  border-left: 2px solid #00ff00;
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--cyber-green) 0%, #00cc44 100%);
+  color: #000;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
 }
 
 .chat-message.ai {
-  background: rgba(0, 255, 255, 0.1);
-  color: #00ffff;
-  margin-right: 20px;
-  border-left: 2px solid #00ffff;
+  align-self: flex-start;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  color: var(--cyber-green);
+  border-bottom-left-radius: 4px;
 }
 
+/* Input area */
 .chat-input-area {
+  padding: 20px;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
+  border-top: 1px solid rgba(0, 255, 136, 0.2);
+  background: linear-gradient(135deg, rgba(0, 20, 0, 0.1) 0%, rgba(0, 0, 20, 0.1) 100%);
 }
 
 .chat-input {
   flex: 1;
-  padding: 12px 15px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(0, 255, 0, 0.3);
+  padding: 12px 16px;
+  background: rgba(15, 15, 20, 0.8);
+  border: 1px solid rgba(0, 255, 136, 0.4);
   border-radius: 8px;
-  color: #00ff00;
-  font-family: 'Courier New', monospace;
-  font-size: 0.9rem;
+  color: var(--cyber-green);
+  font-size: 14px;
   outline: none;
   transition: all 0.3s ease;
 }
 
 .chat-input:focus {
-  border-color: #00ff00;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  border-color: var(--cyber-green);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+  background: rgba(15, 15, 20, 0.95);
 }
 
 .chat-input::placeholder {
-  color: rgba(0, 255, 0, 0.5);
-  font-style: italic;
+  color: rgba(0, 255, 136, 0.5);
 }
 
 .chat-submit {
-  padding: 12px 20px;
-  background: rgba(0, 255, 0, 0.2);
-  border: 1px solid #00ff00;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.2) 100%);
+  border: 1px solid var(--cyber-green);
   border-radius: 8px;
-  color: #00ff00;
+  color: var(--cyber-green);
+  font-weight: 500;
   cursor: pointer;
-  font-family: 'Courier New', monospace;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
   transition: all 0.3s ease;
+  min-width: 100px;
 }
 
-.chat-submit:hover {
-  background: #00ff00;
+.chat-submit:hover:not(:disabled) {
+  background: var(--cyber-green);
   color: #000;
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
+  transform: translateY(-1px);
 }
 
-/* Control Buttons */
+.chat-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Control panel */
 .control-panel {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .control-button {
-  width: 60px;
-  height: 60px;
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(0, 255, 255, 0.3);
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  color: rgba(0, 255, 255, 0.8);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  background: rgba(15, 15, 20, 0.8);
+  color: rgba(0, 255, 136, 0.7);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5em;
+  font-size: 1.2rem;
   transition: all 0.3s ease;
-  text-decoration: none;
+  backdrop-filter: blur(5px);
 }
 
 .control-button:hover {
-  border-color: #00ffff;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
-  transform: scale(1.1);
+  border-color: var(--cyber-green);
+  color: var(--cyber-green);
+  background: rgba(0, 255, 136, 0.1);
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
 }
 
-.control-button:active {
-  transform: scale(0.95);
-}
-
-/* Scanlines Effect */
-.scanlines::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(transparent 50%, rgba(0, 255, 0, 0.03) 50%);
-  background-size: 100% 4px;
-  pointer-events: none;
-  z-index: 15;
-}
-
-/* Console-style text effects */
-.console-text {
-  font-family: 'Courier New', monospace !important;
-  font-size: 0.8em !important;
-  color: #00ff00 !important;
-}
-
-.console-glow {
-  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-}
-
-/* Loading/Processing Indicators */
-.processing {
-  position: relative;
-  color: #ffff00;
-  animation: processingGlow 1.5s ease-in-out infinite alternate;
-}
-
-@keyframes processingGlow {
-  from { text-shadow: 0 0 5px rgba(255, 255, 0, 0.5); }
-  to { text-shadow: 0 0 20px rgba(255, 255, 0, 0.8); }
-}
-
-/* Typing Indicator */
+/* Typing indicator */
 .typing-indicator {
   display: inline-flex;
-  gap: 4px;
-  margin-left: 8px;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  opacity: 0.7;
+  font-style: italic;
 }
 
 .typing-dot {
-  width: 4px;
-  height: 4px;
-  background: #00ff00;
+  width: 6px;
+  height: 6px;
+  background: var(--cyber-green);
   border-radius: 50%;
-  animation: typingBounce 1.4s ease-in-out infinite;
+  animation: typingPulse 1.4s ease-in-out infinite;
 }
 
 .typing-dot:nth-child(2) { animation-delay: -0.4s; }
 .typing-dot:nth-child(3) { animation-delay: -0.8s; }
 
-@keyframes typingBounce {
+@keyframes typingPulse {
   0%, 80%, 100% {
-    transform: scale(0);
-    opacity: 0.5;
+    opacity: 0.3;
+    transform: scale(0.8);
   }
   40% {
-    transform: scale(1);
     opacity: 1;
+    transform: scale(1);
   }
 }
 
-/* Responsive Design */
+/* Status indicators */
+.status-leds {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+.status-led {
+  width: 8px;
+  height: 8px;
+  background: var(--cyber-cyan);
+  border-radius: 50%;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+.status-led:nth-child(2) { animation-delay: -0.5s; }
+.status-led:nth-child(3) { animation-delay: -1s; }
+
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 0.4;
+    box-shadow: 0 0 5px var(--cyber-cyan);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 15px var(--cyber-cyan);
+  }
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
   .ai-interface {
-    padding: 1rem;
+    margin: 10px;
+    height: 95vh;
   }
 
-  .ai-core {
-    width: 100%;
-    max-width: 500px;
-    height: 350px;
+  .chat-message {
+    max-width: 85%;
   }
 
-  .ai-title {
-    font-size: 1rem;
-    top: -50px;
+  .chat-input-area {
+    padding: 16px;
+    flex-direction: column;
   }
 
-  .ai-subtitle {
-    font-size: 0.7rem;
-    bottom: -35px;
+  .control-panel {
+    margin-top: 8px;
   }
 }
 
-/* Power-up Effects */
-@keyframes powerSurge {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
+/* Animation for new messages */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.power-surge {
-  animation: powerSurge 0.5s ease-in-out;
+.chat-message {
+  animation: fadeIn 0.3s ease-out;
 }
 
-/* Override any default React styles */
-* {
-  box-sizing: border-box;
+/* Loading/processing states */
+.processing {
+  opacity: 0.8;
+  filter: blur(0.5px);
+  animation: processingPulse 2s ease-in-out infinite;
 }
 
-/* Ensure dark theme throughout */
-.app-layout, .left-panel, .right-panel, .center-panel {
-  background: transparent !important;
+@keyframes processingPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
 }
 
-body, html {
-  background: #000000 !important;
-  color: #00ff00 !important;
-  font-family: 'Courier New', monospace !important;
-}
-
-/* Remove any default margins/padding */
-.app-layout, .left-panel, .right-panel, .center-panel, .hoodie-figure, .cms-sidebar, .info-box {
-  display: none !important;
-}
-
-/* Hide old components not part of the new cyberpunk theme */
-.cms-sidebar, .app-layout, .hoodie-figure, .left-panel, .right-panel, .center-panel {
-  display: none !important;
+/* Clean footer */
+.ai-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(0, 255, 136, 0.2);
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.6;
+  font-weight: 300;
 }

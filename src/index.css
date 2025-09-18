@@ -1,114 +1,116 @@
-/* Cyberpunk Global Styles - Override ALL default styles */
+/* Cyberpunk Global Styles - Professional & Clean */
 
-/* Force cyberpunk theme on ALL elements */
-* {
-  font-family: 'Courier New', monospace !important;
-  color: #00ff00 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
-  -webkit-font-smoothing: antialiased !important;
-  text-rendering: optimizeLegibility !important;
-}
-
-/* Force body to be cyberpunk black */
-body {
-  background: #000000 !important;
-  color: #00ff00 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  overflow: hidden !important;
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  z-index: -1 !important;
-}
-
-/* Force root to cyberpunk theme */
-#root {
-  background: transparent !important;
-  color: #00ff00 !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  z-index: 1 !important;
-}
-
+/* Base setup with cyperpunk accents */
 :root {
-  color: #00ff00 !important;
-  background-color: #000000 !important;
-  font-family: 'Courier New', monospace !important;
-
-  /* Force dark mode only */
-  color-scheme: dark !important;
+  --cyber-green: #00ff88;
+  --cyber-cyan: #00ffff;
+  --cyber-pink: #ff00ff;
+  --terminal-bg: #0a0a0a;
+  --panel-bg: rgba(0, 0, 0, 0.85);
+  --glow-color: rgba(0, 255, 136, 0.3);
 }
 
-/* Override any default links */
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Clean body setup - not pure black like matrix */
+body {
+  background: linear-gradient(135deg, #0a0a0f 0%, #0d1117 100%);
+  color: var(--cyber-green);
+  line-height: 1.6;
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Professional root container */
+#root {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  background: transparent;
+}
+
+/* Subtle animation - not matrix-like scanlines */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 30% 30%, var(--glow-color) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  animation: subtleGlow 12s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes subtleGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* Clean text styling */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--cyber-green);
+  font-weight: 300;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+p {
+  color: rgba(0, 255, 136, 0.9);
+}
+
+/* Elegant links */
 a {
-  color: #00ffff !important;
-  text-decoration: none !important;
+  color: var(--cyber-cyan);
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 a:hover {
-  color: #ffffff !important;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
+  color: #ffffff;
 }
 
-/* Override default buttons (but NOT our cyberpunk buttons) */
-button:not(.control-button):not(.chat-submit) {
-  background: rgba(0, 255, 0, 0.1) !important;
-  border: 1px solid #00ff00 !important;
-  color: #00ff00 !important;
-  border-radius: 4px !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
+/* Clean buttons */
+button {
+  background: var(--panel-bg);
+  border: 1px solid var(--cyber-green);
+  border-radius: 6px;
+  color: var(--cyber-green);
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
 }
 
-button:not(.control-button):not(.chat-submit):hover {
-  background: #00ff00 !important;
-  color: #000 !important;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5) !important;
+button:hover {
+  background: var(--cyber-green);
+  color: #000;
+  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
 }
 
-/* Override default headings */
-h1, h2, h3, h4, h5, h6 {
-  color: #00ff00 !important;
-  text-shadow: 0 0 15px rgba(0, 255, 0, 0.5) !important;
-  font-family: 'Courier New', monospace !important;
-}
-
-/* Remove light mode media query completely */
-@media (prefers-color-scheme: light) {
+/* Professional dark theme */
+@media (prefers-color-scheme: dark) {
   :root {
-    color: #00ff00 !important;
-    background-color: #000000 !important;
-  }
-  a:hover {
-    color: #ffffff !important;
-  }
-  button:not(.control-button):not(.chat-submit) {
-    background-color: rgba(0, 255, 0, 0.1) !important;
-    color: #00ff00 !important;
+    color-scheme: dark;
   }
 }
 
-/* Remove ANY default positioning that might hide content */
-html, body, #root {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  overflow: hidden !important;
-}
+/* Mobile responsive */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
 
-/* Force display visibility */
-html, body, #root, * {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  button {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
 }

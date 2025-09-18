@@ -153,96 +153,104 @@ function App() {
 
   return (
     <div className="cyberpunk-root">
-      <div className="floating-particles">
-        {particles}
-      </div>
-
-      <div className="ai-interface scanlines">
-        <div className="status-leds">
-          <div className="status-led"></div>
-          <div className="status-led"></div>
-          <div className="status-led"></div>
+      <div className="ai-interface">
+        {/* Header */}
+        <div className="ai-header">
+          <h1 className="ai-title">Ø∞ AUTONOMOUS INTELLIGENCE ∞Ø</h1>
+          <div className="ai-subtitle">
+            Neural Network Online • Real Autonomous Operations
+          </div>
         </div>
 
-        <div className="ai-title">Ø∞ AUTONOMOUS INTELLIGENCE ∞Ø</div>
-
-        <div className="ai-core">
+        {/* Content */}
+        <div className="ai-content">
           <div className="chat-container">
+            {/* Messages */}
             <div className="chat-messages" ref={messagesRef}>
               {messages.map((message, index) => (
                 <div
                   key={index}
                   className={`chat-message ${message.role} ${
                     message.processing ? 'processing' : ''
-                  } ${message.error ? 'console-glow' : ''}`}
+                  }`}
                 >
-                  <span className="console-text">
-                    {message.role === 'ai' ? '\n> ' : '\n< '} {message.content}
-                    {index === messages.length - 1 && isTyping && (
-                      <span className="typing-indicator">
-                        <span className="typing-dot"></span>
-                        <span className="typing-dot"></span>
-                        <span className="typing-dot"></span>
-                      </span>
-                    )}
-                  </span>
+                  {message.role === 'ai' ? '> ' : '< '}{message.content}
+                  {index === messages.length - 1 && isTyping && (
+                    <div className="typing-indicator">
+                      <span className="typing-dot"></span>
+                      <span className="typing-dot"></span>
+                      <span className="typing-dot"></span>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
 
+            {/* Input */}
             <form className="chat-input-area" onSubmit={handleSubmit}>
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Enter quantum command..."
+                placeholder="Type your message to the autonomous AI..."
                 className="chat-input"
                 disabled={isTyping}
               />
               <button
                 type="submit"
                 disabled={isTyping || !inputValue.trim()}
-                className={`chat-submit ${isTyping ? 'power-surge' : ''}`}
+                className="chat-submit"
               >
-                {isTyping ? 'Ø∞' : 'TRANSMIT'}
+                {isTyping ? 'Thinking...' : 'Send'}
               </button>
             </form>
           </div>
+
+          {/* Controls */}
+          <div className="control-panel">
+            <button
+              className="control-button"
+              onClick={analyzeSystem}
+              disabled={isTyping}
+              title="Analyze System State"
+            >
+              🤖
+            </button>
+            <button
+              className="control-button"
+              onClick={showEvolution}
+              disabled={isTyping}
+              title="Show Evolution Progress"
+            >
+              📊
+            </button>
+            <button
+              className="control-button"
+              onClick={clearHistory}
+              disabled={isTyping}
+              title="Clear Memory Cache"
+            >
+              🔄
+            </button>
+          </div>
         </div>
 
-        <div className="ai-subtitle">
-          <span style={{ color: currentProvider === 'multimodal' ? '#00ff00' : '#ffff00' }}>
-            ◦ {currentProvider.toUpperCase()} ◦
+        {/* Status LEDs */}
+        <div className="status-leds">
+          <div className="status-led"></div>
+          <div className="status-led"></div>
+          <div className="status-led"></div>
+        </div>
+
+        {/* Footer */}
+        <div className="ai-footer">
+          <span style={{ color: currentProvider === 'multimodal' ? 'var(--cyber-green)' : 'var(--cyber-cyan)' }}>
+            AI Provider: {currentProvider.toUpperCase()}
           </span>
-          {' '}NEURAL STATUS • ENHANCED • EVOLVING
-        </div>
-
-        <div className="control-panel">
-          <button
-            className="control-button"
-            onClick={analyzeSystem}
-            disabled={isTyping}
-            title="Analyze System State"
-          >
-            🤖
-          </button>
-          <button
-            className="control-button"
-            onClick={showEvolution}
-            disabled={isTyping}
-            title="Show Evolution Progress"
-          >
-            📊
-          </button>
-          <button
-            className="control-button"
-            onClick={clearHistory}
-            disabled={isTyping}
-            title="Clear Memory Cache"
-          >
-            🔄
-          </button>
+          <span style={{ marginLeft: '16px' }}>
+            Status: {isTyping ? 'Processing' : 'Ready'}
+          </span>
         </div>
       </div>
 

@@ -1,8 +1,8 @@
 {
   "name": "josolinap.github.io",
+  "version": "0.0.0",
   "homepage": "https://josolinap.github.io/",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "npm run build && gh-pages -d dist",
+    "deploy:live": "npm run build && gh-pages -d dist -b gh-pages -o origin",
     "deploy:setup": "node scripts/setup-deployment.js",
     "worker:create": "node scripts/create-worker.js",
     "deploy:auto": "gh workflow run autonomous-deployment.yml",
