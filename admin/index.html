@@ -5,33 +5,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>Content Manager</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .loading { color: #666; }
+    .error { color: #d00; }
+  </style>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@2.10.192/dist/decap-cms.js?v=1"></script>
+  <div id="loading">Loading CMS...</div>
+  <div id="error" style="display:none;"></div>
+
   <script>
-    CMS.init({
-      config: {
-        backend: {
-          name: 'github',
-          repo: 'josolinap/josolinap.github.io',
-          branch: 'main'
-        },
-        media_folder: 'assets/images',
-        public_folder: '/assets/images',
-        collections: [
-          {
-            name: 'posts',
-            label: 'Blog Posts',
-            folder: '_posts',
-            create: true,
-            fields: [
-              {label: 'Title', name: 'title', widget: 'string'},
-              {label: 'Body', name: 'body', widget: 'markdown'}
-            ]
-          }
-        ]
-      }
+    // Show loading message
+    document.getElementById('loading').innerHTML = 'Loading Decap CMS...';
+
+    // Error handling
+    window.addEventListener('error', function(e) {
+      document.getElementById('error').style.display = 'block';
+      document.getElementById('error').innerHTML = 'Error loading CMS: ' + e.message;
+      document.getElementById('loading').style.display = 'none';
     });
+
+    // Check if CMS loads
+    window.CMSLoaded = function() {
+      document.getElementById('loading').innerHTML = 'CMS loaded successfully!';
+    };
+  </script>
+
+  <script src="https://unpkg.com/netlify-cms@2.10.192/dist/netlify-cms.js?v=2"></script>
+  <script>
+    // Initialize CMS
+    try {
+      if (typeof CMS !== 'undefined') {
+        CMS.init({
+          config: {
+            backend: {
+              name: 'github',
+              repo: 'josolinap/josolinap.github.io',
+              branch: 'main'
+            },
+            media_folder: 'assets/images',
+            public_folder: '/assets/images',
+            collections: [{
+              name: 'posts',
+              label: 'Blog Posts',
+              folder: '_posts',
+              create: true,
+              fields: [
+                {label: 'Title', name: 'title', widget: 'string'},
+                {label: 'Body', name: 'body', widget: 'markdown'}
+              ]
+            }]
+          }
+        });
+        document.getElementById('loading').innerHTML = 'CMS initialized!';
+      } else {
+        throw new Error('CMS object not found');
+      }
+    } catch (e) {
+      document.getElementById('error').style.display = 'block';
+      document.getElementById('error').innerHTML = 'CMS initialization error: ' + e.message;
+      document.getElementById('loading').style.display = 'none';
+    }
   </script>
 </body>
 </html>
