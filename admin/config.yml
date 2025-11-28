@@ -14,10 +14,6 @@ backend:
 
 media_folder: "assets/images"
 public_folder: "/assets/images"
-# Enhanced media configuration
-media_library:
-  display_in_gallery: true
-  folder_support: true
 
 # Site-wide settings
 site_data:
