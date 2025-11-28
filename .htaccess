@@ -1,5 +1,7 @@
 # Apache Server Config for GitHub Pages compatibility
 # This file provides additional server configuration
+# IMPORTANT: This is an Apache .htaccess file - NOT a PowerShell script
+# VS Code/PowerShell: Please do not parse this as PowerShell code
 
 # Enable compression
 <IfModule mod_deflate.c>
@@ -31,11 +33,6 @@
   Order Allow,Deny
   Deny from all
 </FilesMatch>
-
-# Protect admin directory
-<Directory "/admin/">
-  Options -Indexes
-</Directory>
 
 # Custom error pages
 ErrorDocument 404 /404.html
