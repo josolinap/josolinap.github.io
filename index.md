@@ -131,27 +131,41 @@ classes: wide
   </div>
 </div>
 
-<div class="repos-section">
+<div class="blog-section">
   <div class="section-header">
-    <h2>📦 Repositories</h2>
+    <h2>📝 Blog</h2>
     <a href="https://github.com/josolinap" target="_blank" class="view-all-link">View on GitHub →</a>
   </div>
 
-  <div id="repos-list" class="repos-list">
-    <!-- Repositories will be loaded dynamically -->
-    <div class="loading">Loading repositories...</div>
+  <div id="blog-posts" class="blog-posts">
+    <!-- Blog posts will be loaded dynamically from GitHub repos -->
+    <div class="loading">Loading blog posts...</div>
+  </div>
+</div>
+
+<!-- Modal for displaying README content -->
+<div id="readme-modal" class="modal" style="display: none;">
+  <div class="modal-overlay" onclick="closeModal()"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-title"></h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div id="modal-body" class="modal-body">
+      <div class="loading">Loading content...</div>
+    </div>
   </div>
 </div>
 
 <script>
-// GitHub API integration
+// GitHub API integration - Display repos as blog posts
 async function loadGitHubRepos() {
   const username = 'josolinap';
-  const reposList = document.getElementById('repos-list');
+  const blogPosts = document.getElementById('blog-posts');
 
   try {
     // Fetch repositories
-    const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=5`);
+    const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=8`);
     const repos = await response.json();
 
     if (!response.ok) {
@@ -159,60 +173,116 @@ async function loadGitHubRepos() {
     }
 
     // Clear loading message
-    reposList.innerHTML = '';
+    blogPosts.innerHTML = '';
 
-    // Display repositories
+    // Display repositories as blog posts
     for (const repo of repos) {
       if (repo.fork) continue; // Skip forked repos
 
-      const repoCard = document.createElement('div');
-      repoCard.className = 'repo-card';
+      const postItem = document.createElement('div');
+      postItem.className = 'post-item';
 
-      repoCard.innerHTML = `
-        <div class="repo-header">
-          <h3 class="repo-title">
-            <a href="${repo.html_url}" target="_blank">${repo.name}</a>
+      postItem.innerHTML = `
+        <div class="post-content">
+          <h3 class="post-title">
+            <a href="#" onclick="openReadme('${repo.name}', '${repo.full_name}')">${repo.name.replace(/-/g, ' ')}</a>
           </h3>
-          <div class="repo-badges">
-            ${repo.language ? `<span class="badge">${repo.language}</span>` : ''}
-            ${repo.archived ? '<span class="badge badge-archived">Archived</span>' : ''}
-          </div>
+          <p class="post-excerpt">${repo.description || 'A technical project and experiment'}</p>
         </div>
-
-        <p class="repo-description">${repo.description || 'No description available'}</p>
-
-        <div class="repo-stats">
-          <span class="stat">
-            <span class="stat-icon">⭐</span>
-            ${repo.stargazers_count}
-          </span>
-          <span class="stat">
-            <span class="stat-icon">🍴</span>
-            ${repo.forks_count}
-          </span>
-          <span class="stat">
-            <span class="stat-icon">📅</span>
-            ${new Date(repo.updated_at).toLocaleDateString()}
-          </span>
+        <div class="post-meta">
+          <span class="post-date">${new Date(repo.created_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })}</span>
+          <span class="post-reading-time">${repo.language || 'Code'}</span>
         </div>
       `;
 
-      reposList.appendChild(repoCard);
+      blogPosts.appendChild(postItem);
     }
 
   } catch (error) {
-    reposList.innerHTML = `
+    blogPosts.innerHTML = `
       <div class="error-message">
-        Failed to load repositories. <a href="https://github.com/${username}" target="_blank">View on GitHub</a>
+        Failed to load blog posts. <a href="https://github.com/${username}" target="_blank">View on GitHub</a>
       </div>
     `;
     console.error('GitHub API Error:', error);
   }
 }
 
+// Modal functions
+function openReadme(repoName, fullName) {
+  const modal = document.getElementById('readme-modal');
+  const modalTitle = document.getElementById('modal-title');
+  const modalBody = document.getElementById('modal-body');
+
+  modalTitle.textContent = repoName.replace(/-/g, ' ');
+  modalBody.innerHTML = '<div class="loading">Loading README...</div>';
+  modal.style.display = 'flex';
+
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
+
+  // Fetch README content
+  fetchReadme(fullName);
+}
+
+function closeModal() {
+  const modal = document.getElementById('readme-modal');
+  modal.style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+// Fetch README content from GitHub
+async function fetchReadme(fullName) {
+  const modalBody = document.getElementById('modal-body');
+
+  try {
+    // Try to get README.md first
+    const readmeResponse = await fetch(`https://api.github.com/repos/${fullName}/readme`);
+    const readmeData = await readmeResponse.json();
+
+    if (readmeResponse.ok && readmeData.content) {
+      // Decode base64 content
+      const content = atob(readmeData.content.replace(/\n/g, ''));
+      modalBody.innerHTML = marked.parse(content);
+    } else {
+      // Fallback: Show basic repo info
+      modalBody.innerHTML = `
+        <div class="readme-fallback">
+          <h4>About this project</h4>
+          <p>This repository contains code and documentation for a technical project.</p>
+          <p><a href="https://github.com/${fullName}" target="_blank">View on GitHub →</a></p>
+        </div>
+      `;
+    }
+  } catch (error) {
+    modalBody.innerHTML = `
+      <div class="readme-fallback">
+        <h4>Content not available</h4>
+        <p>Unable to load README content at this time.</p>
+        <p><a href="https://github.com/${fullName}" target="_blank">View on GitHub →</a></p>
+      </div>
+    `;
+    console.error('README fetch error:', error);
+  }
+}
+
+// Close modal on escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeModal();
+  }
+});
+
 // Load repositories when page loads
 document.addEventListener('DOMContentLoaded', loadGitHubRepos);
 </script>
+
+<!-- Include marked.js for Markdown parsing -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
 /* GitHub Dark Mode */
@@ -504,87 +574,195 @@ body {
   border-color: var(--accent-blue);
 }
 
-/* Repositories Section */
-.repos-section {
+/* Blog Section */
+.blog-section {
   padding: 2rem 0;
   border-top: 1px solid var(--border-color);
 }
 
-.repos-list {
+.blog-posts {
   padding: 0 2rem;
-  max-width: 1000px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
-.repo-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 1rem;
-  margin-bottom: 1rem;
-  transition: all 0.2s ease;
+.post-item {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.repo-card:hover {
-  border-color: var(--border-hover);
-  background: var(--bg-tertiary);
+.post-item:last-child {
+  border-bottom: none;
 }
 
-.repo-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+.post-content {
+  margin-bottom: 0.75rem;
+}
+
+.post-title {
+  font-size: 1rem;
+  font-weight: 500;
   margin-bottom: 0.5rem;
 }
 
-.repo-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.repo-title a {
+.post-title a {
   color: var(--text-primary);
   text-decoration: none;
 }
 
-.repo-title a:hover {
+.post-title a:hover {
   color: var(--accent-blue);
 }
 
-.repo-badges {
-  display: flex;
-  gap: 0.25rem;
-  flex-shrink: 0;
-}
-
-.badge-archived {
-  background: var(--text-muted);
-  color: var(--bg-primary);
-}
-
-.repo-description {
+.post-excerpt {
   color: var(--text-secondary);
   font-size: 0.875rem;
-  margin-bottom: 0.75rem;
   line-height: 1.5;
 }
 
-.repo-stats {
+.post-meta {
   display: flex;
   gap: 1rem;
   font-size: 0.75rem;
   color: var(--text-muted);
 }
 
-.stat {
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
 }
 
-.stat-icon {
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  position: relative;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  max-width: 800px;
+  max-height: 80vh;
+  width: 90%;
+  margin: 2rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.modal-body h1,
+.modal-body h2,
+.modal-body h3,
+.modal-body h4 {
+  color: var(--text-primary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal-body h1 { font-size: 1.5rem; }
+.modal-body h2 { font-size: 1.25rem; }
+.modal-body h3 { font-size: 1.125rem; }
+
+.modal-body p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.modal-body code {
+  background: var(--bg-tertiary);
+  padding: 0.125rem 0.25rem;
+  border-radius: 3px;
   font-size: 0.875rem;
+  color: var(--accent-blue);
+}
+
+.modal-body pre {
+  background: var(--bg-tertiary);
+  padding: 1rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 1rem 0;
+  border: 1px solid var(--border-color);
+}
+
+.modal-body pre code {
+  background: none;
+  padding: 0;
+  color: var(--text-primary);
+}
+
+.modal-body blockquote {
+  border-left: 4px solid var(--accent-blue);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: var(--text-secondary);
+}
+
+.readme-fallback {
+  text-align: center;
+  padding: 2rem;
+}
+
+.readme-fallback h4 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.readme-fallback p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
 }
 
 .loading {
