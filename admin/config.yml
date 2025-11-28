@@ -2,6 +2,7 @@ backend:
   name: github
   repo: josolinap/josolinap.github.io
   branch: main
+  site_url: https://josolinap.dedyn.io
   # Enhanced backend configuration for better reliability
   squash_merges: true
   commit_messages:
@@ -13,10 +14,6 @@ backend:
 
 media_folder: "assets/images"
 public_folder: "/assets/images"
-# Enhanced media configuration
-media_library:
-  display_in_gallery: true
-  folder_support: true
 
 # Site-wide settings
 site_data:
