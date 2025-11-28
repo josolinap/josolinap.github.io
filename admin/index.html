@@ -5,12 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>Content Manager</title>
-  <link href="config.yml" type="text/yaml" rel="cms-config-url" />
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script src="https://unpkg.com/decap-cms@3.1.0/dist/decap-cms.js"></script>
   <script>
-    CMS.init();
+    CMS.registerPreviewStyle("/assets/css/main.css");
+    CMS.init({
+      config: {
+        backend: {
+          name: 'github',
+          repo: 'josolinap/josolinap.github.io',
+          branch: 'main'
+        },
+        media_folder: 'assets/images',
+        public_folder: '/assets/images',
+        collections: [
+          {
+            name: 'posts',
+            label: 'Blog Posts',
+            folder: '_posts',
+            create: true,
+            slug: '{{year}}-{{month}}-{{day}}-{{slug}}',
+            fields: [
+              {label: 'Title', name: 'title', widget: 'string'},
+              {label: 'Date', name: 'date', widget: 'datetime'},
+              {label: 'Body', name: 'body', widget: 'markdown'}
+            ]
+          },
+          {
+            name: 'pages',
+            label: 'Pages',
+            folder: '_pages',
+            create: true,
+            fields: [
+              {label: 'Title', name: 'title', widget: 'string'},
+              {label: 'Body', name: 'body', widget: 'markdown'}
+            ]
+          },
+          {
+            name: 'projects',
+            label: 'Projects',
+            folder: '_projects',
+            create: true,
+            fields: [
+              {label: 'Title', name: 'title', widget: 'string'},
+              {label: 'Description', name: 'description', widget: 'text'},
+              {label: 'Body', name: 'body', widget: 'markdown'}
+            ]
+          }
+        ]
+      }
+    });
   </script>
 </body>
 </html>
