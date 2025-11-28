@@ -4,196 +4,411 @@ author_profile: true
 classes: wide
 ---
 
-<div class="hero-section">
-  <div class="hero-content">
-    <h1>Welcome to My Portfolio</h1>
-    <p class="hero-subtitle">I'm Josolina, a creative developer passionate about building beautiful web experiences and innovative solutions.</p>
-    <div class="hero-actions">
-      <a href="/projects" class="cta-button primary">View My Work</a>
-      <a href="/about" class="cta-button secondary">Learn More</a>
-    </div>
-  </div>
-</div>
-
-## Featured Projects
-
-<div class="featured-projects-grid">
-  {% assign featured_projects = site.projects | where: "featured", true | limit: 6 %}
-  {% for project in featured_projects %}
-  <div class="featured-card">
-    <div class="card-image">
-      {% if project.header.image %}
-        <img src="{{ project.header.image }}" alt="{{ project.title }}" loading="lazy">
-      {% else %}
-        <div class="card-placeholder">
-          <span>{{ project.title | truncate: 2, "" }}</span>
-        </div>
-      {% endif %}
-      <div class="card-overlay">
-        <div class="card-content">
-          <h3>{{ project.title }}</h3>
-          <p>{{ project.description | truncate: 80 }}</p>
-          <a href="{{ project.url }}" class="card-link">View Project</a>
-        </div>
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">Hi, I'm Josolina</h1>
+      <p class="hero-subtitle">Creative developer crafting beautiful digital experiences</p>
+      <div class="hero-cta">
+        <a href="/projects" class="btn btn-primary">View My Work</a>
+        <a href="/about" class="btn btn-secondary">About Me</a>
       </div>
     </div>
   </div>
-  {% endfor %}
-</div>
+  <div class="hero-bg-pattern"></div>
+</section>
 
-<div class="explore-section">
-  <h2>Explore My Work</h2>
-  <p>Discover my latest projects, experiments, and creative endeavors</p>
-  <a href="/projects" class="explore-button">Browse All Projects</a>
-</div>
+<!-- Featured Projects -->
+<section class="featured-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Featured Projects</h2>
+      <p class="section-subtitle">A curated selection of my recent work</p>
+    </div>
 
-## Latest Posts
+    <div class="projects-grid">
+      {% assign featured_projects = site.projects | where: "featured", true | limit: 6 %}
+      {% for project in featured_projects %}
+      <article class="project-card">
+        <div class="card-image-wrapper">
+          {% if project.header.image %}
+            <img src="{{ project.header.image }}" alt="{{ project.title }}" class="card-image" loading="lazy">
+          {% else %}
+            <div class="card-image-placeholder">
+              <span class="placeholder-icon">{{ project.title | truncate: 1, "" }}</span>
+            </div>
+          {% endif %}
+          <div class="card-overlay">
+            <div class="card-content">
+              <h3 class="card-title">{{ project.title }}</h3>
+              <p class="card-description">{{ project.description | truncate: 100 }}</p>
+              <div class="card-actions">
+                <a href="{{ project.url }}" class="btn btn-small">View Details</a>
+                {% if project.project_url %}
+                  <a href="{{ project.project_url }}" target="_blank" class="btn btn-small btn-outline">Live Demo</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
 
-<div class="latest-posts">
-  {% assign latest_posts = site.posts | sort: "date" | reverse | limit: 3 %}
-  {% for post in latest_posts %}
-  <article class="post-card">
-    <div class="post-content">
-      <h3><a href="{{ post.url }}">{{ post.title }}</a></h3>
-      <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 120 }}</p>
-      <div class="post-meta">
-        <time>{{ post.date | date: "%B %d, %Y" }}</time>
-        {% if post.categories %}
-          <span class="post-category">{{ post.categories | join: ", " }}</span>
-        {% endif %}
+    <div class="section-footer">
+      <a href="/projects" class="btn btn-large">Explore All Projects</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">{{ site.projects | size }}</div>
+        <div class="stat-label">Projects Completed</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">{{ site.posts | size }}</div>
+        <div class="stat-label">Articles Written</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">3+</div>
+        <div class="stat-label">Years Experience</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">50+</div>
+        <div class="stat-label">Happy Clients</div>
       </div>
     </div>
-  </article>
-  {% endfor %}
-</div>
+  </div>
+</section>
+
+<!-- Latest Posts -->
+<section class="posts-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Latest Thoughts</h2>
+      <p class="section-subtitle">Insights and tutorials from my development journey</p>
+    </div>
+
+    <div class="posts-grid">
+      {% assign latest_posts = site.posts | sort: "date" | reverse | limit: 3 %}
+      {% for post in latest_posts %}
+      <article class="post-card">
+        <div class="post-content">
+          <div class="post-categories">
+            {% for category in post.categories limit: 2 %}
+              <span class="category-tag">{{ category }}</span>
+            {% endfor %}
+          </div>
+          <h3 class="post-title">
+            <a href="{{ post.url }}">{{ post.title }}</a>
+          </h3>
+          <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 150 }}</p>
+          <div class="post-footer">
+            <time class="post-date" datetime="{{ post.date | date: '%Y-%m-%d' }}">
+              {{ post.date | date: "%b %d, %Y" }}
+            </time>
+            <span class="post-read-time">{{ post.content | number_of_words | divided_by: 200 | plus: 1 }} min read</span>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <div class="section-footer">
+      <a href="/blog" class="btn btn-outline">Read All Posts</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2>Let's Work Together</h2>
+      <p>I'm always excited to take on new challenges and collaborate on interesting projects.</p>
+      <a href="/contact" class="btn btn-primary btn-large">Get In Touch</a>
+    </div>
+  </div>
+</section>
 
 <style>
-/* Hero Section */
-.hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 80px 20px;
-  text-align: center;
-  margin-bottom: 60px;
-  border-radius: 20px;
+/* Import Google Fonts for better typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* CSS Custom Properties for consistent theming */
+:root {
+  --primary-color: #6366f1;
+  --primary-dark: #4f46e5;
+  --secondary-color: #f8fafc;
+  --accent-color: #e11d48;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+}
+
+h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; }
+h2 { font-size: clamp(2rem, 4vw, 3rem); }
+h3 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+h4 { font-size: clamp(1.25rem, 2.5vw, 1.875rem); }
+
+p {
+  margin: 0 0 1.5rem 0;
+  color: var(--text-secondary);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
   position: relative;
   overflow: hidden;
 }
 
-.hero-section::before {
-  content: '';
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--secondary-color);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--text-primary);
+  color: white;
+}
+
+.btn-large {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+}
+
+/* Sections */
+section {
+  padding: 5rem 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.section-title {
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-subtitle {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.section-footer {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  margin: 2rem;
+}
+
+.hero-bg-pattern {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
   opacity: 0.1;
+  background-image:
+    radial-gradient(circle at 25% 25%, white 2px, transparent 2px),
+    radial-gradient(circle at 75% 75%, white 2px, transparent 2px);
+  background-size: 50px 50px;
 }
 
 .hero-content {
   position: relative;
   z-index: 1;
-  max-width: 800px;
-  margin: 0 auto;
+  padding: 6rem 2rem;
+  text-align: center;
 }
 
-.hero-content h1 {
-  font-size: 3.5rem;
-  margin-bottom: 20px;
+.hero-title {
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
   font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
 }
 
 .hero-subtitle {
-  font-size: 1.3rem;
-  margin-bottom: 40px;
+  font-size: clamp(1.125rem, 4vw, 1.375rem);
   opacity: 0.9;
-  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 400;
 }
 
-.hero-actions {
+.hero-cta {
   display: flex;
-  gap: 20px;
+  gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.cta-button {
-  padding: 15px 30px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  display: inline-block;
+/* Featured Projects */
+.featured-section {
+  background: var(--secondary-color);
 }
 
-.cta-button.primary {
-  background: white;
-  color: #667eea;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.cta-button.secondary {
-  background: transparent;
-  color: white;
-  border: 2px solid white;
-}
-
-.cta-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-}
-
-/* Featured Projects Grid */
-.featured-projects-grid {
+.projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 30px;
-  margin: 60px 0;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
 }
 
-.featured-card {
+.project-card {
   background: white;
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow-lg);
+  transition: var(--transition);
   position: relative;
 }
 
-.featured-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+.project-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+}
+
+.card-image-wrapper {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
 }
 
 .card-image {
-  position: relative;
-  height: 250px;
-  overflow: hidden;
-}
-
-.card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: var(--transition);
 }
 
-.featured-card:hover .card-image img {
+.project-card:hover .card-image {
   transform: scale(1.05);
 }
 
-.card-placeholder {
+.card-image-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 48px;
-  font-weight: bold;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  font-weight: 700;
+  opacity: 0.8;
 }
 
 .card-overlay {
@@ -202,185 +417,282 @@ classes: wide
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: var(--transition);
+  padding: 2rem;
 }
 
-.featured-card:hover .card-overlay {
+.project-card:hover .card-overlay {
   opacity: 1;
 }
 
 .card-content {
   text-align: center;
   color: white;
-  padding: 20px;
+  max-width: 280px;
 }
 
-.card-content h3 {
-  margin: 0 0 15px 0;
-  font-size: 1.5rem;
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
-.card-content p {
-  margin: 0 0 20px 0;
+.card-description {
+  font-size: 0.875rem;
   opacity: 0.9;
+  margin-bottom: 1.5rem;
   line-height: 1.5;
 }
 
-.card-link {
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Stats Section */
+.stats-section {
   background: white;
-  color: #333;
-  padding: 10px 25px;
-  border-radius: 25px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: inline-block;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
-.card-link:hover {
-  background: #f0f0f0;
-  transform: translateY(-2px);
-}
-
-/* Explore Section */
-.explore-section {
-  text-align: center;
-  padding: 60px 20px;
-  background: #f8f9fa;
-  border-radius: 20px;
-  margin: 60px 0;
-}
-
-.explore-section h2 {
-  color: #333;
-  margin-bottom: 15px;
-  font-size: 2.5rem;
-}
-
-.explore-section p {
-  color: #666;
-  font-size: 1.2rem;
-  margin-bottom: 30px;
-}
-
-.explore-button {
-  background: #e60023;
-  color: white;
-  padding: 15px 40px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  display: inline-block;
-}
-
-.explore-button:hover {
-  background: #c0001d;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(230, 0, 35, 0.3);
-}
-
-/* Latest Posts */
-.latest-posts {
+.stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 30px;
-  margin-top: 60px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  text-align: center;
+}
+
+.stat-item {
+  padding: 2rem 1rem;
+}
+
+.stat-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Posts Section */
+.posts-section {
+  background: var(--secondary-color);
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
 }
 
 .post-card {
   background: white;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  transition: all 0.3s ease;
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  border: 1px solid var(--border-color);
 }
 
 .post-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-color);
 }
 
-.post-card h3 {
-  margin: 0 0 15px 0;
-  font-size: 1.4rem;
+.post-categories {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
-.post-card h3 a {
-  color: #333;
+.category-tag {
+  background: var(--primary-color);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.post-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.post-title a {
+  color: var(--text-primary);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: var(--transition);
 }
 
-.post-card h3 a:hover {
-  color: #667eea;
+.post-title a:hover {
+  color: var(--primary-color);
 }
 
 .post-excerpt {
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
-.post-meta {
+.post-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.9rem;
-  color: #888;
+  font-size: 0.875rem;
+  color: var(--text-muted);
 }
 
-.post-category {
-  background: #f0f0f0;
-  padding: 4px 12px;
-  border-radius: 15px;
-  font-size: 0.8rem;
+.post-date {
+  font-weight: 500;
+}
+
+.post-read-time {
+  opacity: 0.8;
+}
+
+/* CTA Section */
+.cta-section {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  text-align: center;
+}
+
+.cta-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cta-content h2 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.cta-content p {
+  font-size: 1.125rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .hero-content h1 {
-    font-size: 2.5rem;
+  .container {
+    padding: 0 1rem;
   }
 
-  .hero-subtitle {
-    font-size: 1.1rem;
+  section {
+    padding: 3rem 0;
   }
 
-  .hero-actions {
+  .hero-content {
+    padding: 4rem 1rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 10vw, 3.5rem);
+  }
+
+  .hero-cta {
     flex-direction: column;
     align-items: center;
   }
 
-  .featured-projects-grid,
-  .latest-posts {
+  .projects-grid,
+  .posts-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 1.5rem;
   }
 
-  .explore-section h2 {
-    font-size: 2rem;
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .stat-item {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn {
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
   .hero-section {
-    padding: 50px 20px;
+    margin: 1rem;
+    border-radius: var(--radius-lg);
   }
 
-  .hero-content h1 {
-    font-size: 2rem;
+  .section-header {
+    margin-bottom: 2rem;
   }
 
-  .featured-card,
-  .post-card {
-    margin: 0 10px;
+  .post-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus states */
+.btn:focus,
+a:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .hero-section,
+  .cta-section {
+    background: white !important;
+    color: black !important;
+  }
+
+  .btn {
+    display: none;
   }
 }
 </style>
