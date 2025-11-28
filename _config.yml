@@ -10,6 +10,11 @@ baseurl                  : ""
 repository               : "josolinap/josolinap.github.io"
 minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
+# Pinterest-style layout settings
+pinterest_layout: true
+grid_layout: true
+masonry_columns: 3
+
 # Theme
 remote_theme             : "mmistakes/minimal-mistakes@4.27.3"
 
