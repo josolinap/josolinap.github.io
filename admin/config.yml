@@ -2,9 +2,6 @@ backend:
   name: github
   repo: josolinap/josolinap.github.io
   branch: main
-  auth_endpoint: https://github.com/login/oauth/authorize
-  token_endpoint: https://github.com/login/oauth/access_token
-  api_root: https://api.github.com
 
 media_folder: "assets/images"
 public_folder: "/assets/images"
