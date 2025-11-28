@@ -2,8 +2,6 @@ backend:
   name: github
   repo: josolinap/josolinap.github.io
   branch: main
-  base_url: https://josolinap.dedyn.io
-  auth_endpoint: /oauth
 
 media_folder: "assets/images"
 public_folder: "/assets/images"
