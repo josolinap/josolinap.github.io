@@ -2,6 +2,9 @@ backend:
   name: github
   repo: josolinap/josolinap.github.io
   branch: main
+  # Direct GitHub OAuth (replace with your app credentials)
+  client_id: YOUR_GITHUB_CLIENT_ID
+  client_secret: YOUR_GITHUB_CLIENT_SECRET
 
 media_folder: "assets/images"
 public_folder: "/assets/images"
