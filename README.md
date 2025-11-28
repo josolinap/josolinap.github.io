@@ -1,4 +1,4 @@
-# Josolina Portfolio
+# Josolinap Portfolio
 
 A modern, responsive portfolio website built with Jekyll and powered by Decap CMS. This site showcases creative development work and provides an easy-to-use content management system.
 

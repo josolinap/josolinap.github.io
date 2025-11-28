@@ -56,6 +56,7 @@ plugins:
   - jekyll-feed
   - jekyll-include-cache
   - jekyll-seo-tag
+  - jekyll-archives
 
 # Reading Files
 include:
@@ -94,14 +95,14 @@ search: true
 search_full_content: true
 search_provider: lunr
 
-# Analytics
+# Analytics - Add your GA4 ID here
 analytics:
   provider: "google-gtag"
   google:
-    tracking_id: # Add your GA4 tracking ID here
+    tracking_id: # G-XXXXXXXXXX
     anonymize_ip: true
 
-# Comments
+# Comments - Utterances (GitHub-based comments)
 comments:
   provider: "utterances"
   utterances:
@@ -121,6 +122,18 @@ collections:
   projects:
     output: true
     permalink: /projects/:name/
+
+# Archives - Enhanced with jekyll-archives
+jekyll-archives:
+  enabled:
+    - categories
+    - tags
+  layouts:
+    category: archive-taxonomy
+    tag: archive-taxonomy
+  permalinks:
+    category: /categories/:name/
+    tag: /tags/:name/
 
 # Conversion
 markdown: kramdown
@@ -147,6 +160,10 @@ compress_html:
   clippings: all
   ignore:
     envs: development
+
+# Performance & Security
+# Add security headers via _headers file
+include: ["_headers"]
 
 # Defaults
 defaults:
