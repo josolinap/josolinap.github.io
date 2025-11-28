@@ -5,80 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>Content Manager</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .loading { color: #666; }
-    .error { color: #d00; }
-  </style>
 </head>
 <body>
-  <div id="loading">Loading CMS...</div>
-  <div id="error" style="display:none;"></div>
-
-  <script>
-    // Show loading message
-    document.getElementById('loading').innerHTML = 'Loading Decap CMS...';
-
-    // Error handling
-    window.addEventListener('error', function(e) {
-      document.getElementById('error').style.display = 'block';
-      document.getElementById('error').innerHTML = 'Error loading CMS: ' + e.message;
-      document.getElementById('loading').style.display = 'none';
-    });
-
-    // Check if CMS loads
-    window.CMSLoaded = function() {
-      document.getElementById('loading').innerHTML = 'CMS loaded successfully!';
-    };
-  </script>
-
-  <script>
-    // Set config before loading CMS script
-    window.CMS_CONFIG = {
-      backend: {
-        name: 'github',
-        repo: 'josolinap/josolinap.github.io',
-        branch: 'main',
-        base_url: 'https://josolinap.dedyn.io'
-      },
-      media_folder: 'assets/images',
-      public_folder: '/assets/images',
-      collections: [{
-        name: 'posts',
-        label: 'Blog Posts',
-        folder: '_posts',
-        create: true,
-        fields: [
-          {label: 'Title', name: 'title', widget: 'string'},
-          {label: 'Body', name: 'body', widget: 'markdown'}
-        ]
-      }]
-    };
-  </script>
-
-  <script src="https://unpkg.com/decap-cms@3.0.0/dist/decap-cms.js?v=5"></script>
-
-  <script>
-    // CMS will auto-initialize with window.CMS_CONFIG
-    try {
-      if (typeof CMS !== 'undefined') {
-        // Wait a bit for auto-initialization
-        setTimeout(function() {
-          if (document.querySelector('.nc-cms')) {
-            document.getElementById('loading').innerHTML = 'CMS initialized successfully!';
-          } else {
-            document.getElementById('loading').innerHTML = 'CMS loaded - checking initialization...';
-          }
-        }, 1000);
-      } else {
-        throw new Error('CMS object not found - script failed to load');
-      }
-    } catch (e) {
-      document.getElementById('error').style.display = 'block';
-      document.getElementById('error').innerHTML = 'CMS initialization error: ' + e.message;
-      document.getElementById('loading').style.display = 'none';
-      console.error('CMS Error:', e);
-    }
-  </script>
+  <!-- Include the script that builds the page and powers Decap CMS -->
+  <script src="https://unpkg.com/decap-cms@3.0.0/dist/decap-cms.js"></script>
 </body>
 </html>
