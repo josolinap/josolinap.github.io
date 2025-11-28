@@ -2,27 +2,9 @@ backend:
   name: github
   repo: josolinap/josolinap.github.io
   branch: main
-  site_url: https://josolinap.dedyn.io
-  # Enhanced backend configuration for better reliability
-  squash_merges: true
-  commit_messages:
-    create: "Create {{collection}} '{{slug}}'"
-    update: "Update {{collection}} '{{slug}}'"
-    delete: "Delete {{collection}} '{{slug}}'"
-    uploadMedia: "Upload '{{path}}'"
-    deleteMedia: "Delete '{{path}}'"
 
 media_folder: "assets/images"
 public_folder: "/assets/images"
-
-# Site-wide settings
-site_data:
-  author:
-    - {label: "Name", name: "name", widget: "string"}
-    - {label: "Bio", name: "bio", widget: "text"}
-    - {label: "Avatar", name: "avatar", widget: "image"}
-    - {label: "Location", name: "location", widget: "string"}
-    - {label: "Email", name: "email", widget: "string"}
 
 collections:
   - name: "posts"
