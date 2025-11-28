@@ -34,33 +34,31 @@
 
   <script src="https://unpkg.com/netlify-cms@2.10.192/dist/netlify-cms.js?v=2"></script>
   <script>
-    // Initialize CMS with explicit config only
+    // Initialize CMS with direct config object
     try {
       if (typeof CMS !== 'undefined') {
-        // Explicitly prevent loading external config
-        CMS.init({
-          config: {
-            backend: {
-              name: 'github',
-              repo: 'josolinap/josolinap.github.io',
-              branch: 'main'
-            },
-            media_folder: 'assets/images',
-            public_folder: '/assets/images',
-            collections: [{
-              name: 'posts',
-              label: 'Blog Posts',
-              folder: '_posts',
-              create: true,
-              fields: [
-                {label: 'Title', name: 'title', widget: 'string'},
-                {label: 'Body', name: 'body', widget: 'markdown'}
-              ]
-            }],
-            // Explicitly disable external config loading
-            load_config_file: false
-          }
-        });
+        // Use CMS.registerConfig to avoid external loading
+        const config = {
+          backend: {
+            name: 'github',
+            repo: 'josolinap/josolinap.github.io',
+            branch: 'main'
+          },
+          media_folder: 'assets/images',
+          public_folder: '/assets/images',
+          collections: [{
+            name: 'posts',
+            label: 'Blog Posts',
+            folder: '_posts',
+            create: true,
+            fields: [
+              {label: 'Title', name: 'title', widget: 'string'},
+              {label: 'Body', name: 'body', widget: 'markdown'}
+            ]
+          }]
+        };
+
+        CMS.init({ config });
         document.getElementById('loading').innerHTML = 'CMS initialized successfully!';
       } else {
         throw new Error('CMS object not found - script failed to load');
