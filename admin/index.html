@@ -34,9 +34,10 @@
 
   <script src="https://unpkg.com/netlify-cms@2.10.192/dist/netlify-cms.js?v=2"></script>
   <script>
-    // Initialize CMS
+    // Initialize CMS with explicit config only
     try {
       if (typeof CMS !== 'undefined') {
+        // Explicitly prevent loading external config
         CMS.init({
           config: {
             backend: {
@@ -55,17 +56,20 @@
                 {label: 'Title', name: 'title', widget: 'string'},
                 {label: 'Body', name: 'body', widget: 'markdown'}
               ]
-            }]
+            }],
+            // Explicitly disable external config loading
+            load_config_file: false
           }
         });
-        document.getElementById('loading').innerHTML = 'CMS initialized!';
+        document.getElementById('loading').innerHTML = 'CMS initialized successfully!';
       } else {
-        throw new Error('CMS object not found');
+        throw new Error('CMS object not found - script failed to load');
       }
     } catch (e) {
       document.getElementById('error').style.display = 'block';
       document.getElementById('error').innerHTML = 'CMS initialization error: ' + e.message;
       document.getElementById('loading').style.display = 'none';
+      console.error('CMS Error:', e);
     }
   </script>
 </body>
