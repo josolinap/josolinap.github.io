@@ -6,9 +6,11 @@ permalink: "/projects/"
 classes: wide
 ---
 
-<div class="page-header">
-  <h1>My Projects</h1>
-  <p>A curated collection of my creative work and technical experiments</p>
+<div class="readme-header">
+  <div class="readme-content">
+    <h1>📁 Projects</h1>
+    <p>A comprehensive collection of web development projects and experiments</p>
+  </div>
 </div>
 
 <div class="projects-section">
@@ -16,37 +18,44 @@ classes: wide
     {% assign sorted_projects = site.projects | sort: "date" | reverse %}
     {% for project in sorted_projects %}
     <div class="project-card">
-      <div class="project-image">
-        {% if project.header.image %}
-          <img src="{{ project.header.image }}" alt="{{ project.title }}">
-        {% else %}
-          <div class="project-placeholder">{{ project.title | truncate: 1, "" }}</div>
-        {% endif %}
+      <div class="card-header">
+        <h3 class="card-title">
+          <a href="{{ project.url }}">{{ project.title }}</a>
+        </h3>
+        <div class="card-badges">
+          <span class="badge badge-small">{{ project.project_type }}</span>
+          {% if project.status %}
+            <span class="badge badge-{{ project.status | downcase }}">{{ project.status }}</span>
+          {% endif %}
+        </div>
       </div>
-      <div class="project-info">
-        <div class="project-meta">
-          <span class="project-type">{{ project.project_type }}</span>
-          {% if project.date %}
-            <span class="project-date">{{ project.date | date: "%b %Y" }}</span>
+
+      <p class="card-description">{{ project.description | truncate: 140 }}</p>
+
+      {% if project.technologies %}
+        <div class="tech-stack">
+          {% for tech in project.technologies limit: 5 %}
+            <span class="tech-tag">{{ tech }}</span>
+          {% endfor %}
+          {% if project.technologies.size > 5 %}
+            <span class="tech-more">+{{ project.technologies.size | minus: 5 }} more</span>
           {% endif %}
         </div>
-        <h3>{{ project.title }}</h3>
-        <p>{{ project.description | truncate: 100 }}</p>
+      {% endif %}
 
-        {% if project.technologies %}
-          <div class="tech-stack">
-            {% for tech in project.technologies limit: 3 %}
-              <span class="tech-tag">{{ tech }}</span>
-            {% endfor %}
-          </div>
-        {% endif %}
-
-        <div class="project-links">
-          <a href="{{ project.url }}" class="project-link">View Details</a>
+      <div class="card-footer">
+        <div class="card-links">
+          <a href="{{ project.url }}" class="card-link">📄 Details</a>
           {% if project.project_url %}
-            <a href="{{ project.project_url }}" target="_blank" class="project-link">Live Demo</a>
+            <a href="{{ project.project_url }}" target="_blank" class="card-link">🌐 Demo</a>
+          {% endif %}
+          {% if project.github_url %}
+            <a href="{{ project.github_url }}" target="_blank" class="card-link">📦 Code</a>
           {% endif %}
         </div>
+        {% if project.date %}
+          <span class="card-date">{{ project.date | date: "%b %Y" }}</span>
+        {% endif %}
       </div>
     </div>
     {% endfor %}
@@ -54,7 +63,10 @@ classes: wide
 </div>
 
 <div class="skills-section">
-  <h2>Technologies & Skills</h2>
+  <div class="section-header">
+    <h2>🛠️ Technologies</h2>
+  </div>
+
   <div class="skills-grid">
     <div class="skill-category">
       <h3>Frontend</h3>
@@ -66,6 +78,7 @@ classes: wide
         <span class="skill-tag">HTML5</span>
         <span class="skill-tag">CSS3</span>
         <span class="skill-tag">Sass</span>
+        <span class="skill-tag">Tailwind</span>
       </div>
     </div>
 
@@ -78,246 +91,327 @@ classes: wide
         <span class="skill-tag">MongoDB</span>
         <span class="skill-tag">Express</span>
         <span class="skill-tag">Django</span>
+        <span class="skill-tag">GraphQL</span>
       </div>
     </div>
 
     <div class="skill-category">
-      <h3>Tools & Others</h3>
+      <h3>Tools & DevOps</h3>
       <div class="skill-tags">
         <span class="skill-tag">Git</span>
         <span class="skill-tag">Docker</span>
         <span class="skill-tag">AWS</span>
+        <span class="skill-tag">Vercel</span>
         <span class="skill-tag">Figma</span>
-        <span class="skill-tag">Adobe XD</span>
-        <span class="skill-tag">Jekyll</span>
+        <span class="skill-tag">Jest</span>
+        <span class="skill-tag">Webpack</span>
       </div>
     </div>
   </div>
 </div>
 
 <style>
-/* Clean, simple design */
-.page-header {
-  text-align: center;
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  color: white;
+/* GitHub Dark Mode */
+@import url('https://fonts.googleapis.com/css2?family/Inter:wght@400;500;600&display=swap');
+
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --text-primary: #f0f0f0;
+  --text-secondary: #c9d1d9;
+  --text-muted: #8b949e;
+  --border-color: #30363d;
+  --border-hover: #58a6ff;
+  --accent-blue: #58a6ff;
+  --accent-green: #56d364;
+  --shadow: 0 8px 24px rgba(1, 4, 9, 0.25);
+  --radius: 6px;
 }
 
-.page-header h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* README Header */
+.readme-header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 3rem 2rem;
+}
+
+.readme-content h1 {
+  font-size: 2rem;
   font-weight: 600;
   margin-bottom: 1rem;
+  color: var(--text-primary);
 }
 
-.page-header p {
-  font-size: 1.25rem;
-  opacity: 0.9;
-  max-width: 600px;
-  margin: 0 auto;
+.readme-content p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
 }
 
+/* Projects Section */
 .projects-section {
-  padding: 4rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.projects-section h2 {
-  font-size: 2.5rem;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: 3rem;
-  color: var(--text-dark);
+  padding: 2rem 0;
 }
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-bottom: 4rem;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 1rem;
+  padding: 0 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .project-card {
-  background: white;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
+  padding: 1.25rem;
+  transition: all 0.2s ease;
 }
 
 .project-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+  border-color: var(--border-hover);
+  background: var(--bg-tertiary);
 }
 
-.project-image {
-  height: 220px;
-  overflow: hidden;
-}
-
-.project-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.project-card:hover .project-image img {
-  transform: scale(1.05);
-}
-
-.project-placeholder {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 3rem;
-  font-weight: 700;
-}
-
-.project-info {
-  padding: 1.5rem;
-}
-
-.project-meta {
+.card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-  color: var(--text-medium);
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
 }
 
-.project-type {
-  background: var(--secondary);
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.card-title a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.card-title a:hover {
+  color: var(--accent-blue);
+}
+
+.card-badges {
+  display: flex;
+  gap: 0.375rem;
+  flex-shrink: 0;
+}
+
+.badge {
+  background: var(--accent-blue);
+  color: var(--bg-primary);
   padding: 0.25rem 0.75rem;
-  border-radius: 20px;
+  border-radius: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
 }
 
-.project-info h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: var(--text-dark);
+.badge-small {
+  font-size: 0.625rem;
+  padding: 0.125rem 0.375rem;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
 }
 
-.project-info p {
-  color: var(--text-medium);
-  margin-bottom: 1rem;
+.badge-completed {
+  background: var(--accent-green);
+  color: var(--bg-primary);
+}
+
+.badge-in-progress {
+  background: #d29922;
+  color: var(--bg-primary);
+}
+
+.card-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
   line-height: 1.5;
 }
 
 .tech-stack {
   display: flex;
+  gap: 0.25rem;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .tech-tag {
-  background: var(--accent);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 15px;
-  font-size: 0.75rem;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  font-size: 0.625rem;
   font-weight: 500;
 }
 
-.project-links {
+.tech-more {
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  font-size: 0.625rem;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-links {
   display: flex;
   gap: 1rem;
 }
 
-.project-link {
-  color: var(--primary);
+.card-link {
+  color: var(--text-secondary);
   text-decoration: none;
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: color 0.2s ease;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.project-link:hover {
-  color: var(--primary-light);
+.card-link:hover {
+  color: var(--accent-blue);
 }
 
+.card-date {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* Skills Section */
 .skills-section {
-  padding: 4rem 2rem;
-  background: var(--secondary);
-  margin: 0 2rem;
-  border-radius: var(--radius);
+  padding: 2rem 0;
+  border-top: 1px solid var(--border-color);
 }
 
-.skills-section h2 {
-  font-size: 2.5rem;
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 0 2rem;
+}
+
+.section-header h2 {
+  font-size: 1.25rem;
   font-weight: 600;
-  text-align: center;
-  margin-bottom: 3rem;
-  color: var(--text-dark);
+  color: var(--text-primary);
+  margin: 0;
 }
 
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  max-width: 1000px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 0 2rem;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .skill-category h3 {
-  font-size: 1.25rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  margin-bottom: 1rem;
-  color: var(--text-dark);
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .skill-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
 
 .skill-tag {
-  background: white;
-  color: var(--text-dark);
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
   font-weight: 500;
-  border: 1px solid var(--border);
   transition: all 0.2s ease;
 }
 
 .skill-tag:hover {
-  background: var(--primary);
-  color: white;
-  transform: translateY(-1px);
+  background: var(--accent-blue);
+  color: var(--bg-primary);
+  border-color: var(--accent-blue);
 }
 
-/* Responsive */
+/* Responsive Design */
 @media (max-width: 768px) {
   .projects-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
   }
 
-  .skills-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .page-header {
-    padding: 3rem 1rem;
+  .readme-header {
+    padding: 2rem 1rem;
   }
 
   .projects-section,
   .skills-section {
-    padding: 3rem 1rem;
-    margin: 0 1rem;
+    padding: 1.5rem 0;
   }
+
+  .section-header {
+    padding: 0 1rem;
+  }
+
+  .skills-grid {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .projects-grid {
+    padding: 0 1rem;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .card-badges {
+    align-self: flex-end;
+  }
+}
+
+/* Focus states */
+.card-link:focus,
+a:focus {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
 }
 </style>
 

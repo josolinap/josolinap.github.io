@@ -4,95 +4,175 @@ author_profile: true
 classes: wide
 ---
 
-<div class="hero">
-  <div class="hero-content">
-    <h1>Hi, I'm Josolina</h1>
-    <p>Creative developer crafting digital experiences</p>
-    <div class="hero-buttons">
-      <a href="/projects" class="btn-primary">View Projects</a>
-      <a href="/about" class="btn-secondary">About Me</a>
+<div class="readme-header">
+  <div class="readme-content">
+    <h1>🚀 Portfolio</h1>
+    <p>A collection of projects and experiments in web development</p>
+    <div class="readme-badges">
+      <span class="badge">React</span>
+      <span class="badge">Node.js</span>
+      <span class="badge">TypeScript</span>
+      <span class="badge">Python</span>
     </div>
   </div>
 </div>
 
-<div class="stats">
-  <div class="stat">
-    <div class="number">{{ site.projects | size }}</div>
-    <div class="label">Projects</div>
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-number">{{ site.projects | size }}</span>
+    <span class="stat-label">Projects</span>
   </div>
-  <div class="stat">
-    <div class="number">{{ site.posts | size }}</div>
-    <div class="label">Articles</div>
+  <div class="stat-item">
+    <span class="stat-number">{{ site.posts | size }}</span>
+    <span class="stat-label">Articles</span>
   </div>
-  <div class="stat">
-    <div class="number">3+</div>
-    <div class="label">Years</div>
+  <div class="stat-item">
+    <span class="stat-number">50+</span>
+    <span class="stat-label">Commits</span>
   </div>
 </div>
 
-<div class="featured-projects">
-  <h2>Featured Work</h2>
+<div class="projects-section">
+  <div class="section-header">
+    <h2>📁 Projects</h2>
+    <a href="/projects" class="view-all-link">View all →</a>
+  </div>
+
   <div class="projects-grid">
-    {% assign featured_projects = site.projects | where: "featured", true | limit: 3 %}
+    {% assign featured_projects = site.projects | where: "featured", true | limit: 6 %}
     {% for project in featured_projects %}
     <div class="project-card">
-      <div class="project-image">
-        {% if project.header.image %}
-          <img src="{{ project.header.image }}" alt="{{ project.title }}">
-        {% else %}
-          <div class="project-placeholder">{{ project.title | truncate: 1, "" }}</div>
+      <div class="card-header">
+        <h3 class="card-title">
+          <a href="{{ project.url }}">{{ project.title }}</a>
+        </h3>
+        <div class="card-badges">
+          <span class="badge badge-small">{{ project.project_type }}</span>
+          {% if project.status %}
+            <span class="badge badge-{{ project.status | downcase }}">{{ project.status }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <p class="card-description">{{ project.description | truncate: 120 }}</p>
+
+      {% if project.technologies %}
+        <div class="tech-stack">
+          {% for tech in project.technologies limit: 4 %}
+            <span class="tech-tag">{{ tech }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="card-footer">
+        <div class="card-links">
+          <a href="{{ project.url }}" class="card-link">📄 Details</a>
+          {% if project.project_url %}
+            <a href="{{ project.project_url }}" target="_blank" class="card-link">🌐 Demo</a>
+          {% endif %}
+          {% if project.github_url %}
+            <a href="{{ project.github_url }}" target="_blank" class="card-link">📦 Code</a>
+          {% endif %}
+        </div>
+        {% if project.date %}
+          <span class="card-date">{{ project.date | date: "%b %Y" }}</span>
         {% endif %}
       </div>
-      <div class="project-info">
-        <h3>{{ project.title }}</h3>
-        <p>{{ project.description | truncate: 80 }}</p>
-        <a href="{{ project.url }}" class="project-link">View Project</a>
-      </div>
     </div>
     {% endfor %}
   </div>
-  <div class="view-all">
-    <a href="/projects" class="btn-secondary">View All Projects</a>
+</div>
+
+<div class="skills-section">
+  <div class="section-header">
+    <h2>🛠️ Technologies</h2>
+  </div>
+
+  <div class="skills-grid">
+    <div class="skill-category">
+      <h3>Frontend</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">React</span>
+        <span class="skill-tag">Vue.js</span>
+        <span class="skill-tag">JavaScript</span>
+        <span class="skill-tag">TypeScript</span>
+        <span class="skill-tag">HTML5</span>
+        <span class="skill-tag">CSS3</span>
+        <span class="skill-tag">Sass</span>
+        <span class="skill-tag">Tailwind</span>
+      </div>
+    </div>
+
+    <div class="skill-category">
+      <h3>Backend</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Node.js</span>
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">PostgreSQL</span>
+        <span class="skill-tag">MongoDB</span>
+        <span class="skill-tag">Express</span>
+        <span class="skill-tag">Django</span>
+        <span class="skill-tag">GraphQL</span>
+      </div>
+    </div>
+
+    <div class="skill-category">
+      <h3>Tools & DevOps</h3>
+      <div class="skill-tags">
+        <span class="skill-tag">Git</span>
+        <span class="skill-tag">Docker</span>
+        <span class="skill-tag">AWS</span>
+        <span class="skill-tag">Vercel</span>
+        <span class="skill-tag">Figma</span>
+        <span class="skill-tag">Jest</span>
+        <span class="skill-tag">Webpack</span>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="latest-posts">
-  <h2>Latest Posts</h2>
+<div class="posts-section">
+  <div class="section-header">
+    <h2>📝 Articles</h2>
+    <a href="/blog" class="view-all-link">View all →</a>
+  </div>
+
   <div class="posts-list">
-    {% assign latest_posts = site.posts | sort: "date" | reverse | limit: 3 %}
+    {% assign latest_posts = site.posts | sort: "date" | reverse | limit: 5 %}
     {% for post in latest_posts %}
     <div class="post-item">
-      <h3><a href="{{ post.url }}">{{ post.title }}</a></h3>
+      <div class="post-content">
+        <h3 class="post-title">
+          <a href="{{ post.url }}">{{ post.title }}</a>
+        </h3>
+        <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 140 }}</p>
+      </div>
       <div class="post-meta">
-        <span>{{ post.date | date: "%b %d, %Y" }}</span>
-        <span>{{ post.content | number_of_words | divided_by: 200 | plus: 1 }} min read</span>
+        <span class="post-date">{{ post.date | date: "%b %d, %Y" }}</span>
+        <span class="post-reading-time">{{ post.content | number_of_words | divided_by: 200 | plus: 1 }} min read</span>
       </div>
     </div>
     {% endfor %}
   </div>
-</div>
-
-<div class="cta">
-  <h2>Let's Work Together</h2>
-  <p>Available for new projects and collaborations</p>
-  <a href="/contact" class="btn-primary">Get In Touch</a>
 </div>
 
 <style>
-/* Clean, modern design with excellent color combinations */
+/* GitHub Dark Mode */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  --primary: #4f46e5;
-  --primary-light: #6366f1;
-  --secondary: #f8fafc;
-  --accent: #10b981;
-  --text-dark: #1f2937;
-  --text-medium: #6b7280;
-  --text-light: #9ca3af;
-  --border: #e5e7eb;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --radius: 12px;
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --text-primary: #f0f0f0;
+  --text-secondary: #c9d1d9;
+  --text-muted: #8b949e;
+  --border-color: #30363d;
+  --border-hover: #58a6ff;
+  --accent-blue: #58a6ff;
+  --accent-green: #56d364;
+  --shadow: 0 8px 24px rgba(1, 4, 9, 0.25);
+  --radius: 6px;
 }
 
 * {
@@ -102,93 +182,321 @@ classes: wide
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  line-height: 1.6;
-  color: var(--text-dark);
-  background: var(--secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Hero Section */
-.hero {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-  color: white;
-  padding: 6rem 2rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+/* README Header */
+.readme-header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 3rem 2rem;
 }
 
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.1) 0%, transparent 50%),
-              radial-gradient(circle at 70% 30%, rgba(255,255,255,0.1) 0%, transparent 50%);
-}
-
-.hero-content {
-  position: relative;
-  z-index: 1;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.hero h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
+.readme-content h1 {
+  font-size: 2rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  letter-spacing: -0.02em;
+  color: var(--text-primary);
 }
 
-.hero p {
-  font-size: 1.25rem;
-  opacity: 0.9;
-  margin-bottom: 2rem;
-  font-weight: 400;
+.readme-content p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
 }
 
-.hero-buttons {
+.readme-badges {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  background: var(--accent-blue);
+  color: var(--bg-primary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Stats Bar */
+.stats-bar {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 2rem;
+  display: flex;
+  gap: 2rem;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.btn-primary {
-  background: white;
-  color: var(--primary);
-  padding: 0.875rem 2rem;
-  border-radius: var(--radius);
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.stat-number {
+  color: var(--accent-green);
+  font-weight: 600;
+}
+
+/* Sections */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 0 2rem;
+}
+
+.section-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.view-all-link {
+  color: var(--accent-blue);
   text-decoration: none;
+  font-size: 0.875rem;
   font-weight: 500;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  box-shadow: var(--shadow);
 }
 
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+.view-all-link:hover {
+  text-decoration: underline;
 }
 
-.btn-secondary {
-  background: transparent;
-  color: white;
-  padding: 0.875rem 2rem;
-  border: 2px solid white;
+/* Projects Section */
+.projects-section {
+  padding: 2rem 0;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1rem;
+  padding: 0 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.project-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 1rem;
+  padding: 1rem;
   transition: all 0.2s ease;
 }
 
-.btn-secondary:hover {
-  background: white;
-  color: var(--primary);
+.project-card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-tertiary);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.card-title a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.card-title a:hover {
+  color: var(--accent-blue);
+}
+
+.card-badges {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.badge-small {
+  font-size: 0.625rem;
+  padding: 0.125rem 0.375rem;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.badge-completed {
+  background: var(--accent-green);
+  color: var(--bg-primary);
+}
+
+.badge-in-progress {
+  background: #d29922;
+  color: var(--bg-primary);
+}
+
+.card-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.tech-stack {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.tech-tag {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  font-size: 0.625rem;
+  font-weight: 500;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.card-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.card-link:hover {
+  color: var(--accent-blue);
+}
+
+.card-date {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* Skills Section */
+.skills-section {
+  padding: 2rem 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 0 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.skill-category h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.skill-tag {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.skill-tag:hover {
+  background: var(--accent-blue);
+  color: var(--bg-primary);
+  border-color: var(--accent-blue);
+}
+
+/* Posts Section */
+.posts-section {
+  padding: 2rem 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.posts-list {
+  padding: 0 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.post-item {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.post-item:last-child {
+  border-bottom: none;
+}
+
+.post-content {
+  margin-bottom: 0.75rem;
+}
+
+.post-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.post-title a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.post-title a:hover {
+  color: var(--accent-blue);
+}
+
+.post-excerpt {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.post-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 /* Stats Section */
