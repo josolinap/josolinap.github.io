@@ -32,34 +32,43 @@
     };
   </script>
 
-  <script src="https://unpkg.com/netlify-cms@2.10.192/dist/netlify-cms.js?v=2"></script>
   <script>
-    // Initialize CMS with direct config object
+    // Set config before loading CMS script
+    window.CMS_CONFIG = {
+      backend: {
+        name: 'github',
+        repo: 'josolinap/josolinap.github.io',
+        branch: 'main'
+      },
+      media_folder: 'assets/images',
+      public_folder: '/assets/images',
+      collections: [{
+        name: 'posts',
+        label: 'Blog Posts',
+        folder: '_posts',
+        create: true,
+        fields: [
+          {label: 'Title', name: 'title', widget: 'string'},
+          {label: 'Body', name: 'body', widget: 'markdown'}
+        ]
+      }]
+    };
+  </script>
+
+  <script src="https://unpkg.com/netlify-cms@2.10.192/dist/netlify-cms.js?v=3"></script>
+
+  <script>
+    // CMS will auto-initialize with window.CMS_CONFIG
     try {
       if (typeof CMS !== 'undefined') {
-        // Use CMS.registerConfig to avoid external loading
-        const config = {
-          backend: {
-            name: 'github',
-            repo: 'josolinap/josolinap.github.io',
-            branch: 'main'
-          },
-          media_folder: 'assets/images',
-          public_folder: '/assets/images',
-          collections: [{
-            name: 'posts',
-            label: 'Blog Posts',
-            folder: '_posts',
-            create: true,
-            fields: [
-              {label: 'Title', name: 'title', widget: 'string'},
-              {label: 'Body', name: 'body', widget: 'markdown'}
-            ]
-          }]
-        };
-
-        CMS.init({ config });
-        document.getElementById('loading').innerHTML = 'CMS initialized successfully!';
+        // Wait a bit for auto-initialization
+        setTimeout(function() {
+          if (document.querySelector('.nc-cms')) {
+            document.getElementById('loading').innerHTML = 'CMS initialized successfully!';
+          } else {
+            document.getElementById('loading').innerHTML = 'CMS loaded - checking initialization...';
+          }
+        }, 1000);
       } else {
         throw new Error('CMS object not found - script failed to load');
       }
