@@ -131,30 +131,88 @@ classes: wide
   </div>
 </div>
 
-<div class="posts-section">
+<div class="repos-section">
   <div class="section-header">
-    <h2>📝 Articles</h2>
-    <a href="/blog" class="view-all-link">View all →</a>
+    <h2>📦 Repositories</h2>
+    <a href="https://github.com/josolinap" target="_blank" class="view-all-link">View on GitHub →</a>
   </div>
 
-  <div class="posts-list">
-    {% assign latest_posts = site.posts | sort: "date" | reverse | limit: 5 %}
-    {% for post in latest_posts %}
-    <div class="post-item">
-      <div class="post-content">
-        <h3 class="post-title">
-          <a href="{{ post.url }}">{{ post.title }}</a>
-        </h3>
-        <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 140 }}</p>
-      </div>
-      <div class="post-meta">
-        <span class="post-date">{{ post.date | date: "%b %d, %Y" }}</span>
-        <span class="post-reading-time">{{ post.content | number_of_words | divided_by: 200 | plus: 1 }} min read</span>
-      </div>
-    </div>
-    {% endfor %}
+  <div id="repos-list" class="repos-list">
+    <!-- Repositories will be loaded dynamically -->
+    <div class="loading">Loading repositories...</div>
   </div>
 </div>
+
+<script>
+// GitHub API integration
+async function loadGitHubRepos() {
+  const username = 'josolinap';
+  const reposList = document.getElementById('repos-list');
+
+  try {
+    // Fetch repositories
+    const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=5`);
+    const repos = await response.json();
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch repositories');
+    }
+
+    // Clear loading message
+    reposList.innerHTML = '';
+
+    // Display repositories
+    for (const repo of repos) {
+      if (repo.fork) continue; // Skip forked repos
+
+      const repoCard = document.createElement('div');
+      repoCard.className = 'repo-card';
+
+      repoCard.innerHTML = `
+        <div class="repo-header">
+          <h3 class="repo-title">
+            <a href="${repo.html_url}" target="_blank">${repo.name}</a>
+          </h3>
+          <div class="repo-badges">
+            ${repo.language ? `<span class="badge">${repo.language}</span>` : ''}
+            ${repo.archived ? '<span class="badge badge-archived">Archived</span>' : ''}
+          </div>
+        </div>
+
+        <p class="repo-description">${repo.description || 'No description available'}</p>
+
+        <div class="repo-stats">
+          <span class="stat">
+            <span class="stat-icon">⭐</span>
+            ${repo.stargazers_count}
+          </span>
+          <span class="stat">
+            <span class="stat-icon">🍴</span>
+            ${repo.forks_count}
+          </span>
+          <span class="stat">
+            <span class="stat-icon">📅</span>
+            ${new Date(repo.updated_at).toLocaleDateString()}
+          </span>
+        </div>
+      `;
+
+      reposList.appendChild(repoCard);
+    }
+
+  } catch (error) {
+    reposList.innerHTML = `
+      <div class="error-message">
+        Failed to load repositories. <a href="https://github.com/${username}" target="_blank">View on GitHub</a>
+      </div>
+    `;
+    console.error('GitHub API Error:', error);
+  }
+}
+
+// Load repositories when page loads
+document.addEventListener('DOMContentLoaded', loadGitHubRepos);
+</script>
 
 <style>
 /* GitHub Dark Mode */
@@ -446,57 +504,110 @@ body {
   border-color: var(--accent-blue);
 }
 
-/* Posts Section */
-.posts-section {
+/* Repositories Section */
+.repos-section {
   padding: 2rem 0;
   border-top: 1px solid var(--border-color);
 }
 
-.posts-list {
+.repos-list {
   padding: 0 2rem;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
-.post-item {
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--border-color);
+.repo-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
 }
 
-.post-item:last-child {
-  border-bottom: none;
+.repo-card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-tertiary);
 }
 
-.post-content {
-  margin-bottom: 0.75rem;
-}
-
-.post-title {
-  font-size: 1rem;
-  font-weight: 500;
+.repo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 0.5rem;
 }
 
-.post-title a {
+.repo-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.repo-title a {
   color: var(--text-primary);
   text-decoration: none;
 }
 
-.post-title a:hover {
+.repo-title a:hover {
   color: var(--accent-blue);
 }
 
-.post-excerpt {
+.repo-badges {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.badge-archived {
+  background: var(--text-muted);
+  color: var(--bg-primary);
+}
+
+.repo-description {
   color: var(--text-secondary);
   font-size: 0.875rem;
+  margin-bottom: 0.75rem;
   line-height: 1.5;
 }
 
-.post-meta {
+.repo-stats {
   display: flex;
   gap: 1rem;
   font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.stat-icon {
+  font-size: 0.875rem;
+}
+
+.loading {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 2rem;
+  font-size: 0.875rem;
+}
+
+.error-message {
+  text-align: center;
+  color: #f85149;
+  padding: 2rem;
+  font-size: 0.875rem;
+}
+
+.error-message a {
+  color: var(--accent-blue);
+  text-decoration: none;
+}
+
+.error-message a:hover {
+  text-decoration: underline;
 }
 
 /* Stats Section */
