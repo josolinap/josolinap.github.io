@@ -7,9 +7,8 @@
   <title>Content Manager</title>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@2.10.192/dist/decap-cms.js"></script>
+  <script src="https://unpkg.com/decap-cms@2.10.192/dist/decap-cms.js?v=1"></script>
   <script>
-    CMS.registerPreviewStyle("/assets/css/main.css");
     CMS.init({
       config: {
         backend: {
@@ -25,31 +24,8 @@
             label: 'Blog Posts',
             folder: '_posts',
             create: true,
-            slug: '{{year}}-{{month}}-{{day}}-{{slug}}',
             fields: [
               {label: 'Title', name: 'title', widget: 'string'},
-              {label: 'Date', name: 'date', widget: 'datetime'},
-              {label: 'Body', name: 'body', widget: 'markdown'}
-            ]
-          },
-          {
-            name: 'pages',
-            label: 'Pages',
-            folder: '_pages',
-            create: true,
-            fields: [
-              {label: 'Title', name: 'title', widget: 'string'},
-              {label: 'Body', name: 'body', widget: 'markdown'}
-            ]
-          },
-          {
-            name: 'projects',
-            label: 'Projects',
-            folder: '_projects',
-            create: true,
-            fields: [
-              {label: 'Title', name: 'title', widget: 'string'},
-              {label: 'Description', name: 'description', widget: 'text'},
               {label: 'Body', name: 'body', widget: 'markdown'}
             ]
           }
