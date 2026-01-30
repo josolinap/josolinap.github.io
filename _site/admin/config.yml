@@ -1,0 +1,58 @@
+backend:
+  name: github
+  repo: josolinap/josolinap.github.io
+  branch: main
+  # Direct GitHub OAuth (replace with your app credentials)
+  client_id: YOUR_GITHUB_CLIENT_ID
+  client_secret: YOUR_GITHUB_CLIENT_SECRET
+
+media_folder: "assets/images"
+public_folder: "/assets/images"
+
+collections:
+  - name: "posts"
+    label: "Blog Posts"
+    label_singular: "Post"
+    folder: "_posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "Layout", name: "layout", widget: "hidden", default: "single"}
+      - {label: "Title", name: "title", widget: "string", required: true}
+      - {label: "Subtitle", name: "subtitle", widget: "string"}
+      - {label: "Date", name: "date", widget: "datetime", required: true}
+      - {label: "Author", name: "author", widget: "string", default: "Josolina"}
+      - {label: "Categories", name: "categories", widget: "select", multiple: true, options: ["Web Development", "Design", "Tutorial", "Project", "Personal"]}
+      - {label: "Tags", name: "tags", widget: "list"}
+      - {label: "Featured Post", name: "featured", widget: "boolean", default: false}
+      - {label: "Excerpt", name: "excerpt", widget: "text"}
+      - {label: "Body", name: "body", widget: "markdown", required: true}
+
+  - name: "pages"
+    label: "Static Pages"
+    label_singular: "Page"
+    folder: "_pages"
+    create: true
+    fields:
+      - {label: "Layout", name: "layout", widget: "select", options: ["single", "splash", "home"], default: "single"}
+      - {label: "Title", name: "title", widget: "string", required: true}
+      - {label: "Permalink", name: "permalink", widget: "string", required: true}
+      - {label: "Body", name: "body", widget: "markdown", required: true}
+
+  - name: "projects"
+    label: "Portfolio Projects"
+    label_singular: "Project"
+    folder: "_projects"
+    create: true
+    fields:
+      - {label: "Layout", name: "layout", widget: "hidden", default: "single"}
+      - {label: "Title", name: "title", widget: "string", required: true}
+      - {label: "Date", name: "date", widget: "datetime", required: true}
+      - {label: "Description", name: "description", widget: "text", required: true}
+      - {label: "Project Type", name: "project_type", widget: "select", options: ["Web App", "Website", "Mobile App", "Design", "Experiment", "Other"]}
+      - {label: "Status", name: "status", widget: "select", options: ["Completed", "In Progress", "On Hold"], default: "Completed"}
+      - {label: "Featured Project", name: "featured", widget: "boolean", default: false}
+      - {label: "Project URL", name: "project_url", widget: "string"}
+      - {label: "GitHub URL", name: "github_url", widget: "string"}
+      - {label: "Technologies", name: "technologies", widget: "list"}
+      - {label: "Body", name: "body", widget: "markdown", required: true}

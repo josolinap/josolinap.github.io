@@ -1,5 +1,9 @@
 # Site Settings
 locale                   : "en-US"
+head_scripts:
+  - <link rel="preconnect" href="https://fonts.googleapis.com">
+  - <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  - <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 title                    : "Josolina Portfolio"
 title_separator          : "-"
 subtitle                 : "Creative Developer & Designer"
@@ -8,7 +12,7 @@ description              : "Portfolio and blog showcasing creative projects and 
 url                      : "https://josolinap.dedyn.io"
 baseurl                  : ""
 repository               : "josolinap/josolinap.github.io"
-minimal_mistakes_skin    : "neon" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
+minimal_mistakes_skin    : "dark" # Base skin to build upon
 
 # Pinterest-style layout settings
 pinterest_layout: true
@@ -24,11 +28,11 @@ author:
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "Creative developer passionate about building beautiful web experiences."
   location         : "Online"
-  email            :
+  email            : "jomonsolinap@gmail.com"
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
-      url: "mailto:your.email@example.com"
+      url: "mailto:jomonsolinap@gmail.com"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/josolinap"
@@ -107,6 +111,28 @@ analytics:
     tracking_id: # G-XXXXXXXXXX
     anonymize_ip: true
 
+# SEO & Social Optimization
+seo:
+  type: Person
+  name: "Josolina"
+  links:
+    - "https://github.com/josolinap"
+    - "https://linkedin.com/in/josolina"
+    - "https://twitter.com/josolina"
+
+# Performance optimizations
+lazy_load_images: true
+responsive_images: true
+
+# Social profiles for structured data
+social:
+  name: "Josolina"
+  links:
+    - "https://github.com/josolinap"
+    - "https://linkedin.com/in/josolina"
+    - "https://twitter.com/josolina"
+    - "https://instagram.com/josolina"
+
 # Comments - Utterances (GitHub-based comments)
 comments:
   provider: "utterances"
@@ -122,11 +148,7 @@ facebook:
   app_id:
 og_image: "/assets/images/site-preview.jpg"
 
-# Collections
-collections:
-  projects:
-    output: true
-    permalink: /projects/:name/
+
 
 # Archives - Enhanced with jekyll-archives
 jekyll-archives:
@@ -183,14 +205,7 @@ defaults:
       comments: true
       share: true
       related: true
-  # _projects
-  - scope:
-      path: ""
-      type: projects
-    values:
-      layout: single
-      author_profile: true
-      share: true
+
   # _pages
   - scope:
       path: ""

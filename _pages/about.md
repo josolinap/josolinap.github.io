@@ -31,10 +31,10 @@ My journey in tech started with curiosity about how websites work. What began as
 
 I'm always excited to collaborate on interesting projects or discuss new opportunities. Feel free to reach out!
 
-- **Email**: [your.email@example.com](mailto:your.email@example.com)
+- **Email**: [jomonsolinap@gmail.com](mailto:jomonsolinap@gmail.com)
 - **GitHub**: [github.com/josolinap](https://github.com/josolinap)
 - **LinkedIn**: [linkedin.com/in/josolina](https://linkedin.com/in/josolina)
 
 ---
 
-*"Code is poetry written in logic."*
+_"Code is poetry written in logic."_

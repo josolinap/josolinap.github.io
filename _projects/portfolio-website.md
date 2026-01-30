@@ -8,7 +8,16 @@ status: "Completed"
 featured: true
 project_url: "https://josolinap.dedyn.io"
 github_url: "https://github.com/josolinap/josolinap.github.io"
-technologies: ["Jekyll", "Decap CMS", "Minimal Mistakes", "HTML5", "CSS3", "JavaScript", "GitHub Pages"]
+technologies:
+  [
+    "Jekyll",
+    "Decap CMS",
+    "Minimal Mistakes",
+    "HTML5",
+    "CSS3",
+    "JavaScript",
+    "GitHub Pages",
+  ]
 header:
   image: "/assets/images/portfolio-hero.jpg"
   caption: "Portfolio website homepage"
@@ -21,24 +30,28 @@ This personal portfolio website showcases my work as a creative developer. Built
 ## Features
 
 ### 🎨 Modern Design
+
 - Clean, professional layout using the Minimal Mistakes theme
 - Responsive design that works perfectly on all devices
 - Multiple color schemes and customization options
 - Optimized typography and spacing
 
 ### 📝 Content Management
+
 - Decap CMS integration for easy content editing
 - Git-based workflow for version control
 - Markdown support for rich content creation
 - Image upload and management
 
 ### 🚀 Performance
+
 - Static site generation for lightning-fast loading
 - SEO optimized with proper meta tags
 - Compressed assets and optimized images
 - GitHub Pages hosting for reliable uptime
 
 ### 📱 Responsive & Accessible
+
 - Mobile-first design approach
 - WCAG accessibility guidelines compliance
 - Cross-browser compatibility
@@ -47,6 +60,7 @@ This personal portfolio website showcases my work as a creative developer. Built
 ## Technical Implementation
 
 ### Jekyll & Liquid
+
 The site uses Jekyll's powerful templating system with Liquid for dynamic content rendering. Collections are used to organize different content types:
 
 - `_posts` for blog articles
@@ -54,14 +68,18 @@ The site uses Jekyll's powerful templating system with Liquid for dynamic conten
 - `_pages` for static content
 
 ### Decap CMS Configuration
+
 Custom CMS configuration provides:
+
 - Intuitive editing interface
 - Field validation and hints
 - Preview functionality
 - Media library management
 
 ### Theme Customization
+
 Extended the Minimal Mistakes theme with:
+
 - Custom color schemes
 - Enhanced typography
 - Additional layout options
@@ -92,4 +110,4 @@ Extended the Minimal Mistakes theme with:
 
 ---
 
-*This project demonstrates my ability to create modern, maintainable web experiences using static site generators and headless CMS solutions.*
+_This project demonstrates my ability to create modern, maintainable web experiences using static site generators and headless CMS solutions._

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-12-09T15:33:36+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Josolina Portfolio</title><subtitle>Portfolio and blog showcasing creative projects and development work.</subtitle><author><name>Josolina</name></author><entry><title type="html">Welcome to My Portfolio</title><link href="http://localhost:4000/blog/2025/11/28/welcome-to-my-portfolio.html" rel="alternate" type="text/html" title="Welcome to My Portfolio" /><published>2025-11-28T00:00:00+08:00</published><updated>2025-11-28T00:00:00+08:00</updated><id>http://localhost:4000/blog/2025/11/28/welcome-to-my-portfolio</id><content type="html" xml:base="http://localhost:4000/blog/2025/11/28/welcome-to-my-portfolio.html"><![CDATA[<p>Welcome to my new portfolio site! I’m excited to share my journey as a creative developer and showcase the projects that define my work.</p>
+
+<h2 id="what-youll-find-here">What You’ll Find Here</h2>
+
+<p>This site serves as both a portfolio and a blog where I share:</p>
+
+<ul>
+  <li><strong>Projects</strong>: Detailed case studies of my work</li>
+  <li><strong>Thoughts</strong>: Articles about development, design, and technology</li>
+  <li><strong>Experiments</strong>: Fun side projects and technical explorations</li>
+</ul>
+
+<h2 id="getting-started-with-decap-cms">Getting Started with Decap CMS</h2>
+
+<p>This site is now powered by Decap CMS, which means you can easily edit content through a user-friendly interface. Simply visit <code class="language-plaintext highlighter-rouge">/admin</code> to start creating and editing posts, pages, and projects.</p>
+
+<p>The CMS allows you to:</p>
+<ul>
+  <li>Write blog posts with rich markdown formatting</li>
+  <li>Upload images and media</li>
+  <li>Manage project portfolios</li>
+  <li>Create static pages</li>
+</ul>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>Feel free to explore the site and check out the admin interface. I’m looking forward to sharing more content and projects with you!</p>]]></content><author><name>Josolina</name></author><category term="blog" /><category term="introduction" /><category term="portfolio" /><summary type="html"><![CDATA[Welcome to my new portfolio site! I’m excited to share my journey as a creative developer and showcase the projects that define my work.]]></summary></entry></feed>
