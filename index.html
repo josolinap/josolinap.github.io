@@ -10,16 +10,31 @@
     />
     <meta name="author" content="JoSolinap" />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <!-- Performance: DNS Prefetch and Preconnect -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://github.com" />
+    <link rel="dns-prefetch" href="https://api.github.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+
+    <!-- Performance: Preconnect to critical origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://github.com" crossorigin />
+    <link rel="preconnect" href="https://api.github.com" crossorigin />
+
+    <!-- Performance: Preload critical fonts -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj7oUXskPMBBSSJLm2E.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
 
+    <!-- Critical CSS Inline - Above the fold styles only -->
     <style>
-      /* CSS Reset and Base */
+      /* Critical CSS - Only what's needed for initial render */
       *,
       *::before,
       *::after {
@@ -27,114 +42,37 @@
         padding: 0;
         box-sizing: border-box;
       }
-
-      /* Design Tokens */
       :root {
         --bg: #050505;
-        --bg-elevated: #0a0a0a;
-        --bg-card: #111111;
-        --bg-card-hover: #1a1a1a;
-        --border: #222222;
-        --border-hover: #333333;
-        --text: #ffffff;
-        --text-muted: #888888;
-        --text-subtle: #555555;
-        --accent-primary: #00f0ff;
-        --accent-secondary: #ff006e;
-        --accent-tertiary: #8338ec;
+        --bg-card: #111;
+        --border: #222;
+        --text: #fff;
+        --text-muted: #888;
+        --accent: #00f0ff;
         --accent-glow: rgba(0, 240, 255, 0.3);
-        --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-        --text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
-        --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
-        --text-lg: clamp(1.125rem, 1rem + 0.625vw, 1.375rem);
-        --text-xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
-        --text-2xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
-        --text-3xl: clamp(2.5rem, 2rem + 2.5vw, 4rem);
-        --space-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
-        --space-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
-        --space-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
-        --space-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
-        --space-xl: clamp(2rem, 1.5rem + 2.5vw, 4rem);
-        --space-2xl: clamp(3rem, 2rem + 5vw, 6rem);
-        --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
       }
-
-      @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
-        }
-      }
-
       body {
         font-family:
-          "Space Grotesk",
-          -apple-system,
-          BlinkMacSystemFont,
-          sans-serif;
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         background: var(--bg);
         color: var(--text);
         line-height: 1.6;
         min-height: 100vh;
-        font-size: var(--text-base);
+        font-size: 16px;
         -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
       }
-
-      /* Background texture */
-      body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background:
-          radial-gradient(
-            ellipse at 20% 20%,
-            rgba(0, 240, 255, 0.03) 0%,
-            transparent 50%
-          ),
-          radial-gradient(
-            ellipse at 80% 80%,
-            rgba(255, 0, 110, 0.03) 0%,
-            transparent 50%
-          ),
-          radial-gradient(
-            ellipse at 50% 50%,
-            rgba(131, 56, 236, 0.02) 0%,
-            transparent 70%
-          );
-        pointer-events: none;
-        z-index: -1;
-      }
-
-      body::after {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        opacity: 0.02;
-        pointer-events: none;
-        z-index: -1;
-      }
-
-      /* Header */
       header {
         padding: var(--space-2xl) var(--space-md) var(--space-xl);
         max-width: 900px;
         margin: 0 auto;
         text-align: center;
-        position: relative;
       }
-
-      /* Profile Image / Avatar */
       .avatar {
         width: 120px;
         height: 120px;
@@ -145,36 +83,26 @@
         box-shadow: 0 0 40px var(--accent-glow);
         animation: pulse-glow 4s ease-in-out infinite;
       }
-
       .avatar img {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
-
-      /* Animated ring around avatar */
       .avatar::before {
         content: "";
         position: absolute;
         inset: -4px;
         border-radius: 50%;
-        background: linear-gradient(
-          135deg,
-          var(--accent-primary),
-          var(--accent-secondary),
-          var(--accent-tertiary)
-        );
+        background: linear-gradient(135deg, var(--accent), #ff006e, #8338ec);
         z-index: -1;
         opacity: 0.5;
         animation: spin 10s linear infinite;
       }
-
       @keyframes spin {
         to {
           transform: rotate(360deg);
         }
       }
-
       @keyframes pulse-glow {
         0%,
         100% {
@@ -186,9 +114,8 @@
             0 0 80px rgba(0, 240, 255, 0.1);
         }
       }
-
       h1 {
-        font-size: var(--text-3xl);
+        font-size: clamp(2rem, 5vw, 3rem);
         font-weight: 700;
         margin-bottom: var(--space-xs);
         letter-spacing: -0.02em;
@@ -201,152 +128,99 @@
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
-
       .social-links {
         display: flex;
         justify-content: center;
         gap: var(--space-md);
       }
-
       .social-links a {
         color: var(--text-muted);
         text-decoration: none;
-        font-size: var(--text-sm);
-        font-family: "JetBrains Mono", monospace;
+        font-size: 14px;
+        font-family: monospace;
         text-transform: uppercase;
         letter-spacing: 0.1em;
         padding: var(--space-xs) var(--space-sm);
         border: 1px solid var(--border);
         border-radius: 4px;
-        transition: all var(--transition-base);
-        cursor: pointer;
+        transition: all 0.3s ease;
       }
-
-      .social-links a:hover,
-      .social-links a:focus-visible {
-        color: var(--accent-primary);
-        border-color: var(--accent-primary);
+      .social-links a:hover {
+        color: var(--accent);
+        border-color: var(--accent);
         box-shadow: 0 0 20px var(--accent-glow);
-        outline: none;
       }
-
-      .social-links a:focus-visible {
-        outline: 2px solid var(--accent-primary);
-        outline-offset: 2px;
-      }
-
-      /* Main Content */
       main {
         max-width: 900px;
         margin: 0 auto;
         padding: 0 var(--space-md) var(--space-2xl);
       }
-
       .section-header {
         display: flex;
         align-items: center;
         gap: var(--space-md);
         margin-bottom: var(--space-lg);
       }
-
       .section-title {
-        font-size: var(--text-xs);
+        font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.2em;
-        color: var(--text-subtle);
+        color: #555;
         font-weight: 600;
-        font-family: "JetBrains Mono", monospace;
+        font-family: monospace;
         white-space: nowrap;
       }
-
       .section-line {
         flex: 1;
         height: 1px;
         background: linear-gradient(to right, var(--border), transparent);
       }
-
-      /* Projects Grid */
       .projects-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
         gap: var(--space-md);
       }
-
       .project-card {
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: 12px;
         padding: var(--space-md);
         cursor: pointer;
-        transition: all var(--transition-base);
+        transition: all 0.3s ease;
         display: flex;
         flex-direction: column;
         gap: var(--space-sm);
         position: relative;
         overflow: hidden;
       }
-
-      .project-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          var(--accent-primary),
-          transparent
-        );
-        opacity: 0;
-        transition: opacity var(--transition-base);
-      }
-
-      .project-card:hover,
-      .project-card:focus-visible {
-        background: var(--bg-card-hover);
-        border-color: var(--border-hover);
+      .project-card:hover {
+        background: #1a1a1a;
+        border-color: #333;
         transform: translateY(-2px);
         box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
       }
-
-      .project-card:hover::before,
-      .project-card:focus-visible::before {
-        opacity: 1;
-      }
-
-      .project-card:focus-visible {
-        outline: 2px solid var(--accent-primary);
-        outline-offset: 2px;
-      }
-
       .project-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         gap: var(--space-sm);
       }
-
       .project-title {
-        font-size: var(--text-lg);
+        font-size: 18px;
         font-weight: 600;
         color: var(--text);
         margin: 0;
         line-height: 1.3;
         letter-spacing: -0.01em;
       }
-
       .project-date {
-        font-size: var(--text-xs);
-        color: var(--text-subtle);
+        font-size: 12px;
+        color: #555;
         white-space: nowrap;
-        flex-shrink: 0;
-        font-family: "JetBrains Mono", monospace;
+        font-family: monospace;
       }
-
       .project-description {
-        font-size: var(--text-sm);
+        font-size: 14px;
         color: var(--text-muted);
         line-height: 1.6;
         display: -webkit-box;
@@ -355,407 +229,142 @@
         overflow: hidden;
         flex: 1;
       }
-
       .project-meta {
         display: flex;
         align-items: center;
         gap: var(--space-md);
-        font-size: var(--text-xs);
-        color: var(--text-subtle);
-        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        color: #555;
+        font-family: monospace;
         padding-top: var(--space-sm);
         border-top: 1px solid var(--border);
       }
-
       .lang-badge {
         display: flex;
         align-items: center;
         gap: 6px;
       }
-
       .lang-dot {
         width: 8px;
         height: 8px;
         border-radius: 50%;
       }
-
       .stats {
         display: flex;
         gap: var(--space-sm);
         margin-left: auto;
       }
-
       .stat {
         display: flex;
         align-items: center;
         gap: 4px;
       }
-
-      /* SVG Icons */
       .icon {
         width: 14px;
         height: 14px;
         fill: currentColor;
       }
-
-      /* Loading State */
       .loading {
         text-align: center;
         padding: var(--space-2xl);
         color: var(--text-muted);
-        grid-column: 1 / -1;
+        grid-column: 1/-1;
       }
-
       .spinner {
         width: 32px;
         height: 32px;
         border: 2px solid var(--border);
-        border-top-color: var(--accent-primary);
+        border-top-color: var(--accent);
         border-radius: 50%;
         animation: spin-anim 1s linear infinite;
         margin: 0 auto var(--space-sm);
       }
-
       @keyframes spin-anim {
         to {
           transform: rotate(360deg);
         }
       }
-
-      /* Error State */
       .error-state {
         text-align: center;
         padding: var(--space-2xl);
         color: var(--text-muted);
-        grid-column: 1 / -1;
+        grid-column: 1/-1;
       }
-
       .error-state a {
-        color: var(--accent-primary);
+        color: var(--accent);
         text-decoration: none;
       }
-
-      .error-state a:hover {
-        text-decoration: underline;
-      }
-
-      /* Modal Styles */
-      .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 1000;
-        background: rgba(5, 5, 5, 0.95);
-        backdrop-filter: blur(12px);
-        padding: var(--space-md);
-      }
-
-      .modal.active {
-        display: flex;
-        flex-direction: column;
-        animation: modal-in var(--transition-base);
-      }
-
-      @keyframes modal-in {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--space-md) 0;
-        border-bottom: 1px solid var(--border);
-        max-width: 800px;
-        margin: 0 auto;
-        width: 100%;
-      }
-
-      .modal-title {
-        font-size: var(--text-xl);
-        font-weight: 600;
-        letter-spacing: -0.02em;
-      }
-
-      .modal-close {
-        background: none;
-        border: 1px solid var(--border);
-        color: var(--text-muted);
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all var(--transition-base);
-        font-size: 1.5rem;
-        line-height: 1;
-      }
-
-      .modal-close:hover,
-      .modal-close:focus-visible {
-        color: var(--accent-secondary);
-        border-color: var(--accent-secondary);
-        background: rgba(255, 0, 110, 0.1);
-      }
-
-      .modal-close:focus-visible {
-        outline: 2px solid var(--accent-secondary);
-        outline-offset: 2px;
-      }
-
-      .modal-body {
-        flex: 1;
-        overflow-y: auto;
-        padding: var(--space-md) 0;
-        max-width: 800px;
-        margin: 0 auto;
-        width: 100%;
-      }
-
-      /* Custom scrollbar */
-      .modal-body::-webkit-scrollbar {
-        width: 8px;
-      }
-
-      .modal-body::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      .modal-body::-webkit-scrollbar-thumb {
-        background: var(--border);
-        border-radius: 4px;
-      }
-
-      .modal-body::-webkit-scrollbar-thumb:hover {
-        background: var(--border-hover);
-      }
-
-      .modal-content {
-        color: var(--text);
-        line-height: 1.8;
-        font-size: var(--text-base);
-      }
-
-      .modal-content h1,
-      .modal-content h2,
-      .modal-content h3 {
-        color: var(--text);
-        margin: var(--space-lg) 0 var(--space-md);
-        font-weight: 600;
-        letter-spacing: -0.02em;
-      }
-
-      .modal-content h1 {
-        font-size: var(--text-2xl);
-        border-bottom: 1px solid var(--border);
-        padding-bottom: var(--space-sm);
-      }
-
-      .modal-content h2 {
-        font-size: var(--text-xl);
-      }
-
-      .modal-content h3 {
-        font-size: var(--text-lg);
-      }
-
-      .modal-content p {
-        margin-bottom: var(--space-md);
-      }
-
-      .modal-content code {
-        background: var(--bg-card);
-        padding: 0.2em 0.4em;
-        border-radius: 4px;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.875em;
-        color: var(--accent-primary);
-      }
-
-      .modal-content pre {
-        background: var(--bg-card);
-        padding: var(--space-md);
-        border-radius: 8px;
-        overflow-x: auto;
-        margin: var(--space-md) 0;
-        border: 1px solid var(--border);
-      }
-
-      .modal-content pre code {
-        background: none;
-        padding: 0;
-        color: var(--text);
-      }
-
-      .modal-content a {
-        color: var(--accent-primary);
-        text-decoration: none;
-        transition: color var(--transition-fast);
-      }
-
-      .modal-content a:hover {
-        color: var(--accent-secondary);
-        text-decoration: underline;
-      }
-
-      .modal-content ul,
-      .modal-content ol {
-        margin: var(--space-md) 0;
-        padding-left: var(--space-lg);
-      }
-
-      .modal-content li {
-        margin: var(--space-xs) 0;
-      }
-
-      .modal-content blockquote {
-        border-left: 3px solid var(--accent-primary);
-        padding-left: var(--space-md);
-        margin: var(--space-md) 0;
-        color: var(--text-muted);
-        font-style: italic;
-      }
-
-      .modal-content img {
-        max-width: 100%;
-        border-radius: 8px;
-        margin: var(--space-md) 0;
-      }
-
-      .modal-footer {
-        padding: var(--space-md) 0;
-        border-top: 1px solid var(--border);
-        display: flex;
-        justify-content: center;
-        max-width: 800px;
-        margin: 0 auto;
-        width: 100%;
-      }
-
-      .github-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--space-sm);
-        padding: var(--space-sm) var(--space-md);
-        background: transparent;
-        color: var(--accent-primary);
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: 500;
-        border: 1px solid var(--accent-primary);
-        transition: all var(--transition-base);
-        cursor: pointer;
-        font-family: "JetBrains Mono", monospace;
-        font-size: var(--text-sm);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      .github-btn:hover,
-      .github-btn:focus-visible {
-        background: var(--accent-primary);
-        color: var(--bg);
-        box-shadow: 0 0 30px var(--accent-glow);
-      }
-
-      .github-btn:focus-visible {
-        outline: 2px solid var(--accent-primary);
-        outline-offset: 2px;
-      }
-
-      /* Responsive */
       @media (max-width: 640px) {
-        :root {
-          --space-md: 1rem;
-          --space-lg: 1.5rem;
-          --space-xl: 2rem;
-          --space-2xl: 3rem;
+        .projects-grid {
+          grid-template-columns: 1fr;
         }
-
-        header {
-          padding-top: var(--space-xl);
-        }
-
-        header::before {
-          height: 40px;
-        }
-
         .avatar {
           width: 100px;
           height: 100px;
         }
-
-        .projects-grid {
-          grid-template-columns: 1fr;
-          gap: var(--space-sm);
-        }
-
-        .modal {
-          padding: var(--space-sm);
-        }
-
-        .modal-header,
-        .modal-footer {
-          padding: var(--space-sm) 0;
-        }
-
-        .modal-body {
-          padding: var(--space-sm) 0;
-        }
-      }
-
-      /* Touch targets */
-      @media (pointer: coarse) {
-        .project-card {
-          padding: var(--space-lg);
-        }
-
-        .modal-close {
-          width: 44px;
-          height: 44px;
-        }
-
-        .github-btn {
-          padding: var(--space-md) var(--space-lg);
-        }
-      }
-
-      /* Print styles */
-      @media print {
-        body {
-          background: white;
-          color: black;
-        }
-
-        .modal {
-          display: none !important;
-        }
-
-        .project-card {
-          break-inside: avoid;
-          border: 1px solid #ccc;
-        }
       }
     </style>
+
+    <!-- Non-critical CSS loaded asynchronously -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    /></noscript>
+
+    <!-- Performance Hints -->
+    <link
+      rel="prefetch"
+      href="https://api.github.com/users/josolinap/repos?sort=updated&per_page=12"
+    />
+
+    <!-- Service Worker Registration for caching -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register(
+            "data:text/javascript;base64," +
+              btoa(`
+          self.addEventListener('install', e => self.skipWaiting());
+          self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+          self.addEventListener('fetch', e => {
+            e.respondWith(
+              caches.match(e.request).then(response => {
+                if (response) return response;
+                return fetch(e.request).then(fetchResponse => {
+                  if (fetchResponse.status === 200) {
+                    const clone = fetchResponse.clone();
+                    caches.open('v1').then(cache => cache.put(e.request, clone));
+                  }
+                  return fetchResponse;
+                });
+              })
+            );
+          });
+        `),
+          )
+          .catch(() => {});
+      }
+    </script>
   </head>
   <body>
     <header>
-      <!-- Profile Image with Animation -->
       <div class="avatar">
         <img
           src="https://github.com/josolinap.png"
           alt="JoSolinap GitHub Profile"
-          onerror="this.src='https://avatars.githubusercontent.com/u/0?v=4'"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          width="120"
+          height="120"
+          onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Crect width=%22120%22 height=%22120%22 fill=%22%23333%22/%3E%3Ctext x=%2260%22 y=%2260%22 font-family=%22sans-serif%22 font-size=%2240%22 fill=%22%23fff%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EJ%3C/text%3E%3C/svg%3E'"
         />
       </div>
       <h1>JoSolinap</h1>
@@ -783,53 +392,113 @@
       </div>
     </main>
 
-    <!-- Modal for displaying README content -->
+    <!-- Modal for README -->
     <div
       id="modal"
       class="modal"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+        background: rgba(5, 5, 5, 0.95);
+        backdrop-filter: blur(12px);
+        padding: 20px;
+      "
     >
-      <div class="modal-header">
-        <h3 class="modal-title" id="modal-title">Project Title</h3>
-        <button
-          class="modal-close"
-          onclick="closeModal()"
-          aria-label="Close modal"
+      <div
+        style="
+          max-width: 800px;
+          margin: 0 auto;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #222;
+          "
         >
-          ×
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-content" id="modal-content">
-          <div class="loading">
-            <div class="spinner"></div>
-            <p>Loading README...</p>
-          </div>
+          <h3
+            id="modal-title"
+            style="font-size: 24px; font-weight: 600; margin: 0"
+          ></h3>
+          <button
+            onclick="closeModal()"
+            style="
+              background: none;
+              border: 1px solid #333;
+              color: #888;
+              width: 40px;
+              height: 40px;
+              border-radius: 8px;
+              cursor: pointer;
+              font-size: 24px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            ×
+          </button>
         </div>
-      </div>
-      <div class="modal-footer">
-        <a
-          id="modal-link"
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="github-btn"
+        <div
+          id="modal-content"
+          style="flex: 1; overflow-y: auto; padding: 16px 0; line-height: 1.8"
+        ></div>
+        <div
+          style="
+            padding: 16px 0;
+            border-top: 1px solid #222;
+            display: flex;
+            justify-content: center;
+          "
         >
-          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-            <path
-              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
-            />
-          </svg>
-          <span>View on GitHub</span>
-        </a>
+          <a
+            id="modal-link"
+            href="#"
+            target="_blank"
+            style="
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+              padding: 12px 24px;
+              background: transparent;
+              color: #00f0ff;
+              text-decoration: none;
+              border-radius: 8px;
+              border: 1px solid #00f0ff;
+              font-family: monospace;
+              font-size: 14px;
+              text-transform: uppercase;
+            "
+            >View on GitHub →</a
+          >
+        </div>
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Async script loading for marked.js -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"
+      async
+      defer
+    ></script>
+
     <script>
-      // Language colors mapping
+      // Language colors
       const langColors = {
         JavaScript: "#f1e05a",
         TypeScript: "#2b7489",
@@ -841,7 +510,7 @@
         Go: "#00ADD8",
         Rust: "#dea584",
         "C++": "#f34b7d",
-        C: "#555555",
+        C: "#555",
         Swift: "#ffac45",
         Kotlin: "#A97BFF",
         PHP: "#4F5D95",
@@ -849,12 +518,10 @@
         Vue: "#41b883",
         React: "#61dafb",
       };
-
-      // Star and fork icons (SVG)
       const starIcon = `<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
       const forkIcon = `<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`;
 
-      // Load GitHub projects
+      // Load projects with caching
       async function loadProjects() {
         const username = "josolinap";
         const projectsGrid = document.getElementById("projects-grid");
@@ -862,15 +529,16 @@
         try {
           const response = await fetch(
             `https://api.github.com/users/${username}/repos?sort=updated&per_page=12`,
+            { cache: "force-cache" },
           );
           const repos = await response.json();
 
-          if (!response.ok) throw new Error("Failed to load projects");
+          if (!response.ok) throw new Error("Failed to load");
 
           projectsGrid.innerHTML = "";
 
           repos
-            .filter((repo) => !repo.fork)
+            .filter((r) => !r.fork)
             .slice(0, 6)
             .forEach((repo, index) => {
               const card = document.createElement("article");
@@ -878,60 +546,29 @@
               card.setAttribute("role", "button");
               card.setAttribute("tabindex", "0");
               card.setAttribute("aria-label", `View ${repo.name} README`);
-
-              // Click handler - open modal
               card.onclick = () => openModal(repo);
-
-              // Keyboard handler for accessibility
               card.onkeydown = (e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
                   openModal(repo);
                 }
               };
-
-              // Staggered animation
               card.style.animationDelay = `${index * 0.1}s`;
 
               const date = new Date(repo.updated_at).toLocaleDateString(
                 "en-US",
-                {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                },
+                { month: "short", day: "numeric", year: "numeric" },
               );
-
               const lang = repo.language || "Code";
               const langColor = langColors[lang] || "#8b949e";
 
-              card.innerHTML = `
-                <div class="project-header">
-                  <h3 class="project-title">${repo.name}</h3>
-                  <span class="project-date">${date}</span>
-                </div>
-                <p class="project-description">${repo.description || "No description available"}</p>
-                <div class="project-meta">
-                  <span class="lang-badge">
-                    <span class="lang-dot" style="background-color: ${langColor}"></span>
-                    <span>${lang}</span>
-                  </span>
-                  <span class="stats">
-                    <span class="stat">${starIcon}<span>${repo.stargazers_count}</span></span>
-                    <span class="stat">${forkIcon}<span>${repo.forks_count}</span></span>
-                  </span>
-                </div>
-              `;
+              card.innerHTML = `<div class="project-header"><h3 class="project-title">${repo.name}</h3><span class="project-date">${date}</span></div><p class="project-description">${repo.description || "No description available"}</p><div class="project-meta"><span class="lang-badge"><span class="lang-dot" style="background-color:${langColor}"></span><span>${lang}</span></span><span class="stats"><span class="stat">${starIcon}<span>${repo.stargazers_count}</span></span><span class="stat">${forkIcon}<span>${repo.forks_count}</span></span></span></div>`;
 
               projectsGrid.appendChild(card);
             });
         } catch (error) {
-          console.error("Error loading projects:", error);
-          projectsGrid.innerHTML = `
-            <div class="error-state">
-              <p>Unable to load projects. <a href="https://github.com/${username}" target="_blank" rel="noopener noreferrer">View on GitHub →</a></p>
-            </div>
-          `;
+          console.error("Error:", error);
+          projectsGrid.innerHTML = `<div class="error-state"><p>Error loading. <a href="https://github.com/josolinap" target="_blank">View on GitHub →</a></p></div>`;
         }
       }
 
@@ -944,86 +581,52 @@
 
         modalTitle.textContent = repo.name;
         modalLink.href = repo.html_url;
-        modal.classList.add("active");
+        modal.style.display = "flex";
         document.body.style.overflow = "hidden";
+        modalContent.innerHTML =
+          '<div class="loading"><div class="spinner"></div><p>Loading README...</p></div>';
 
-        // Focus management for accessibility
-        modal.querySelector(".modal-close").focus();
-
-        modalContent.innerHTML = `
-          <div class="loading">
-            <div class="spinner"></div>
-            <p>Loading README...</p>
-          </div>
-        `;
-
-        // Fetch README content
-        fetchReadme(repo.full_name);
+        fetch(`https://api.github.com/repos/${repo.full_name}/readme`, {
+          cache: "force-cache",
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.content) {
+              const content = atob(data.content.replace(/\n/g, ""));
+              modalContent.innerHTML =
+                typeof marked !== "undefined"
+                  ? marked.parse(content)
+                  : `<pre style="white-space:pre-wrap">${content}</pre>`;
+            } else {
+              modalContent.innerHTML =
+                '<p style="color:#888;text-align:center;padding:2rem">No README available</p>';
+            }
+          })
+          .catch(() => {
+            modalContent.innerHTML =
+              '<p style="color:#888;text-align:center;padding:2rem">Failed to load README</p>';
+          });
       }
 
       function closeModal() {
-        const modal = document.getElementById("modal");
-        modal.classList.remove("active");
+        document.getElementById("modal").style.display = "none";
         document.body.style.overflow = "";
-
-        // Return focus to the element that opened the modal
-        const cards = document.querySelectorAll(".project-card");
-        if (cards.length > 0) {
-          cards[0].focus();
-        }
-      }
-
-      // Fetch README content from GitHub
-      async function fetchReadme(fullName) {
-        const modalContent = document.getElementById("modal-content");
-
-        try {
-          const response = await fetch(
-            `https://api.github.com/repos/${fullName}/readme`,
-          );
-          const data = await response.json();
-
-          if (response.ok && data.content) {
-            // Decode base64 content
-            const content = atob(data.content.replace(/\n/g, ""));
-            // Parse markdown using marked
-            modalContent.innerHTML = marked.parse(content);
-          } else {
-            modalContent.innerHTML = `
-              <p style="color: var(--text-muted); text-align: center; padding: 2rem;">
-                No README available for this project.
-              </p>
-            `;
-          }
-        } catch (error) {
-          console.error("Error loading README:", error);
-          modalContent.innerHTML = `
-            <p style="color: var(--text-muted); text-align: center; padding: 2rem;">
-              Failed to load README content.
-            </p>
-          `;
-        }
       }
 
       // Keyboard navigation
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          const modal = document.getElementById("modal");
-          if (modal.classList.contains("active")) {
-            closeModal();
-          }
-        }
+        if (e.key === "Escape") closeModal();
       });
-
-      // Close on backdrop click
       document.getElementById("modal").addEventListener("click", (e) => {
-        if (e.target === document.getElementById("modal")) {
-          closeModal();
-        }
+        if (e.target === document.getElementById("modal")) closeModal();
       });
 
       // Initialize
-      document.addEventListener("DOMContentLoaded", loadProjects);
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", loadProjects);
+      } else {
+        loadProjects();
+      }
     </script>
   </body>
 </html>
