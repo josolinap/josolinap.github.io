@@ -1,26 +1,17 @@
 # Site Settings
 locale                   : "en-US"
-head_scripts:
-  - <link rel="preconnect" href="https://fonts.googleapis.com">
-  - <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  - <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-title                    : "Josolina Portfolio"
+title                    : "Josolina"
 title_separator          : "-"
 subtitle                 : "Creative Developer & Designer"
 name                     : "Josolina"
-description              : "Portfolio and blog showcasing creative projects and development work."
+description              : "Portfolio showcasing creative development projects and open-source work."
 url                      : "https://josolinap.dedyn.io"
 baseurl                  : ""
 repository               : "josolinap/josolinap.github.io"
-minimal_mistakes_skin    : "dark" # Base skin to build upon
 
-# Pinterest-style layout settings
-pinterest_layout: true
-grid_layout: true
-masonry_columns: 4
-
-# Theme
-remote_theme             : "mmistakes/minimal-mistakes@4.27.3"
+# Disable Jekyll theme - using custom HTML
+remote_theme: null
+theme: null
 
 # Site Author
 author:
