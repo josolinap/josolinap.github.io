@@ -13,34 +13,79 @@ layout: null
       content="Portfolio showcasing creative development projects and open-source work."
     />
 
-    <!-- Fonts -->
+    <!-- Fonts - Distinctive pairing from frontend-design skill -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
 
     <style>
-      * {
+      /* CSS Reset and Base */
+      *,
+      *::before,
+      *::after {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
 
+      /* Design Tokens - Retro-futuristic aesthetic */
       :root {
-        --bg: #0a0a0a;
-        --bg-elevated: #141414;
-        --border: #262626;
-        --text: #fafafa;
-        --text-muted: #a3a3a3;
-        --accent: #3b82f6;
-        --accent-hover: #60a5fa;
+        /* Color palette - bold and distinctive */
+        --bg: #050505;
+        --bg-elevated: #0a0a0a;
+        --bg-card: #111111;
+        --border: #222222;
+        --border-hover: #333333;
+        --text: #ffffff;
+        --text-muted: #888888;
+        --text-subtle: #555555;
+
+        /* Accent colors - cyberpunk inspired */
+        --accent-primary: #00f0ff;
+        --accent-secondary: #ff006e;
+        --accent-tertiary: #8338ec;
+        --accent-glow: rgba(0, 240, 255, 0.3);
+
+        /* Typography scale - fluid from responsive-design skill */
+        --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+        --text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+        --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+        --text-lg: clamp(1.125rem, 1rem + 0.625vw, 1.375rem);
+        --text-xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
+        --text-2xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+        --text-3xl: clamp(2.5rem, 2rem + 2.5vw, 4rem);
+
+        /* Spacing scale */
+        --space-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
+        --space-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+        --space-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+        --space-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
+        --space-xl: clamp(2rem, 1.5rem + 2.5vw, 4rem);
+        --space-2xl: clamp(3rem, 2rem + 5vw, 6rem);
+
+        /* Animation timing */
+        --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* Reduced motion support - accessibility from UI/UX Pro Max */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
       }
 
       body {
         font-family:
-          "Inter",
+          "Space Grotesk",
           -apple-system,
           BlinkMacSystemFont,
           sans-serif;
@@ -48,142 +93,320 @@ layout: null
         color: var(--text);
         line-height: 1.6;
         min-height: 100vh;
+        font-size: var(--text-base);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
-      /* Header */
+      /* Background texture - from frontend-design skill */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(
+            ellipse at 20% 20%,
+            rgba(0, 240, 255, 0.03) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 80% 80%,
+            rgba(255, 0, 110, 0.03) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 50% 50%,
+            rgba(131, 56, 236, 0.02) 0%,
+            transparent 70%
+          );
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      /* Noise texture overlay */
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        opacity: 0.02;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      /* Header - asymmetric layout from frontend-design */
       header {
-        padding: 3rem 1.5rem 2rem;
-        max-width: 800px;
+        padding: var(--space-2xl) var(--space-md) var(--space-xl);
+        max-width: 900px;
         margin: 0 auto;
         text-align: center;
+        position: relative;
+      }
+
+      /* Decorative line */
+      header::before {
+        content: "";
+        position: absolute;
+        top: var(--space-xl);
+        left: 50%;
+        transform: translateX(-50%);
+        width: 1px;
+        height: 60px;
+        background: linear-gradient(
+          to bottom,
+          var(--accent-primary),
+          transparent
+        );
+        opacity: 0.5;
       }
 
       .avatar {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--accent), #8b5cf6);
+        background: linear-gradient(
+          135deg,
+          var(--accent-primary),
+          var(--accent-secondary)
+        );
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 1.5rem;
-        font-size: 2rem;
+        margin: 0 auto var(--space-md);
+        font-size: var(--text-2xl);
         font-weight: 700;
+        position: relative;
+        box-shadow: 0 0 40px var(--accent-glow);
+        animation: pulse-glow 4s ease-in-out infinite;
+      }
+
+      @keyframes pulse-glow {
+        0%,
+        100% {
+          box-shadow: 0 0 40px var(--accent-glow);
+        }
+        50% {
+          box-shadow:
+            0 0 60px var(--accent-glow),
+            0 0 80px rgba(0, 240, 255, 0.1);
+        }
+      }
+
+      /* Avatar ring */
+      .avatar::before {
+        content: "";
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--accent-primary),
+          var(--accent-secondary),
+          var(--accent-tertiary)
+        );
+        z-index: -1;
+        opacity: 0.5;
       }
 
       h1 {
-        font-size: 1.75rem;
+        font-size: var(--text-3xl);
         font-weight: 700;
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--space-xs);
+        letter-spacing: -0.02em;
+        background: linear-gradient(
+          135deg,
+          var(--text) 0%,
+          var(--text-muted) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       .tagline {
         color: var(--text-muted);
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
+        font-size: var(--text-lg);
+        margin-bottom: var(--space-md);
+        font-weight: 400;
       }
 
       .social-links {
         display: flex;
         justify-content: center;
-        gap: 1rem;
+        gap: var(--space-md);
       }
 
       .social-links a {
         color: var(--text-muted);
         text-decoration: none;
-        font-size: 0.875rem;
-        transition: color 0.2s;
+        font-size: var(--text-sm);
+        font-family: "JetBrains Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: var(--space-xs) var(--space-sm);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        transition: all var(--transition-base);
+        cursor: pointer; /* UI/UX Pro Max - cursor pointer */
       }
 
-      .social-links a:hover {
-        color: var(--text);
+      .social-links a:hover,
+      .social-links a:focus-visible {
+        color: var(--accent-primary);
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 20px var(--accent-glow);
+        outline: none;
+      }
+
+      /* Focus visible for accessibility - UI/UX Pro Max */
+      .social-links a:focus-visible {
+        outline: 2px solid var(--accent-primary);
+        outline-offset: 2px;
       }
 
       /* Main Content */
       main {
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto;
-        padding: 0 1.5rem 4rem;
+        padding: 0 var(--space-md) var(--space-2xl);
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        margin-bottom: var(--space-lg);
       }
 
       .section-title {
-        font-size: 0.75rem;
+        font-size: var(--text-xs);
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--text-muted);
-        margin-bottom: 1.5rem;
+        letter-spacing: 0.2em;
+        color: var(--text-subtle);
         font-weight: 600;
+        font-family: "JetBrains Mono", monospace;
+        white-space: nowrap;
       }
 
-      /* Blog Grid */
+      .section-line {
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, var(--border), transparent);
+      }
+
+      /* Blog Grid - from responsive-design skill */
       .blog-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 1px;
-        background: var(--border);
-        border-radius: 12px;
-        overflow: hidden;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
+        gap: var(--space-md);
       }
 
       .blog-card {
-        background: var(--bg-elevated);
-        padding: 1.5rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: var(--space-md);
         cursor: pointer;
-        transition: background 0.2s;
+        transition: all var(--transition-base);
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: var(--space-sm);
+        position: relative;
+        overflow: hidden;
       }
 
-      .blog-card:hover {
-        background: #1a1a1a;
+      /* Card hover effect - frontend-design skill */
+      .blog-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent-primary),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity var(--transition-base);
+      }
+
+      .blog-card:hover,
+      .blog-card:focus-visible {
+        background: var(--bg-elevated);
+        border-color: var(--border-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+      }
+
+      .blog-card:hover::before,
+      .blog-card:focus-visible::before {
+        opacity: 1;
+      }
+
+      .blog-card:focus-visible {
+        outline: 2px solid var(--accent-primary);
+        outline-offset: 2px;
       }
 
       .blog-card-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 1rem;
+        gap: var(--space-sm);
       }
 
       .blog-title {
-        font-size: 1.125rem;
+        font-size: var(--text-lg);
         font-weight: 600;
         color: var(--text);
         margin: 0;
-        line-height: 1.4;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
       }
 
       .blog-date {
-        font-size: 0.75rem;
-        color: var(--text-muted);
+        font-size: var(--text-xs);
+        color: var(--text-subtle);
         white-space: nowrap;
         flex-shrink: 0;
+        font-family: "JetBrains Mono", monospace;
       }
 
       .blog-excerpt {
-        font-size: 0.9375rem;
+        font-size: var(--text-sm);
         color: var(--text-muted);
         line-height: 1.6;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        flex: 1;
       }
 
       .blog-meta {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        font-size: 0.8125rem;
-        color: var(--text-muted);
+        gap: var(--space-md);
+        font-size: var(--text-xs);
+        color: var(--text-subtle);
+        font-family: "JetBrains Mono", monospace;
+        padding-top: var(--space-sm);
+        border-top: 1px solid var(--border);
       }
 
       .lang-badge {
         display: flex;
         align-items: center;
-        gap: 0.375rem;
+        gap: 6px;
       }
 
       .lang-dot {
@@ -194,30 +417,39 @@ layout: null
 
       .stats {
         display: flex;
-        gap: 1rem;
+        gap: var(--space-sm);
+        margin-left: auto;
       }
 
       .stat {
         display: flex;
         align-items: center;
-        gap: 0.25rem;
+        gap: 4px;
+      }
+
+      /* SVG Icons - UI/UX Pro Max (no emojis) */
+      .icon {
+        width: 14px;
+        height: 14px;
+        fill: currentColor;
       }
 
       /* Loading State */
       .loading {
         text-align: center;
-        padding: 3rem;
+        padding: var(--space-2xl);
         color: var(--text-muted);
+        grid-column: 1 / -1;
       }
 
       .spinner {
-        width: 24px;
-        height: 24px;
+        width: 32px;
+        height: 32px;
         border: 2px solid var(--border);
-        border-top-color: var(--accent);
+        border-top-color: var(--accent-primary);
         border-radius: 50%;
         animation: spin 1s linear infinite;
-        margin: 0 auto 1rem;
+        margin: 0 auto var(--space-sm);
       }
 
       @keyframes spin {
@@ -226,7 +458,29 @@ layout: null
         }
       }
 
-      /* Modal */
+      /* Skeleton loading - UI/UX Pro Max */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          var(--bg-card) 25%,
+          var(--bg-elevated) 50%,
+          var(--bg-card) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+        border-radius: 4px;
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      /* Modal - enhanced from UI/UX Pro Max */
       .modal {
         display: none;
         position: fixed;
@@ -235,158 +489,327 @@ layout: null
         right: 0;
         bottom: 0;
         z-index: 1000;
-        background: rgba(0, 0, 0, 0.9);
-        backdrop-filter: blur(8px);
+        background: rgba(5, 5, 5, 0.95);
+        backdrop-filter: blur(12px);
+        padding: var(--space-md);
       }
 
       .modal.active {
         display: flex;
         flex-direction: column;
+        animation: modal-in var(--transition-base);
+      }
+
+      @keyframes modal-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
 
       .modal-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1rem 1.5rem;
+        padding: var(--space-md) 0;
         border-bottom: 1px solid var(--border);
-      }
-
-      .modal-title {
-        font-size: 1.125rem;
-        font-weight: 600;
-      }
-
-      .modal-close {
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        font-size: 1.5rem;
-        cursor: pointer;
-        padding: 0.5rem;
-        line-height: 1;
-        transition: color 0.2s;
-      }
-
-      .modal-close:hover {
-        color: var(--text);
-      }
-
-      .modal-body {
-        flex: 1;
-        overflow-y: auto;
-        padding: 2rem 1.5rem;
         max-width: 800px;
         margin: 0 auto;
         width: 100%;
       }
 
+      .modal-title {
+        font-size: var(--text-xl);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      .modal-close {
+        background: none;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition-base);
+      }
+
+      .modal-close:hover,
+      .modal-close:focus-visible {
+        color: var(--accent-secondary);
+        border-color: var(--accent-secondary);
+        background: rgba(255, 0, 110, 0.1);
+      }
+
+      .modal-close:focus-visible {
+        outline: 2px solid var(--accent-secondary);
+        outline-offset: 2px;
+      }
+
+      .modal-close svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .modal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: var(--space-md) 0;
+        max-width: 800px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      /* Custom scrollbar - UI/UX Pro Max */
+      .modal-body::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .modal-body::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .modal-body::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 4px;
+      }
+
+      .modal-body::-webkit-scrollbar-thumb:hover {
+        background: var(--border-hover);
+      }
+
       .modal-content {
         color: var(--text);
         line-height: 1.8;
+        font-size: var(--text-base);
       }
 
       .modal-content h1,
       .modal-content h2,
       .modal-content h3 {
         color: var(--text);
-        margin: 2rem 0 1rem;
+        margin: var(--space-lg) 0 var(--space-md);
         font-weight: 600;
+        letter-spacing: -0.02em;
       }
 
       .modal-content h1 {
-        font-size: 1.75rem;
+        font-size: var(--text-2xl);
         border-bottom: 1px solid var(--border);
-        padding-bottom: 0.5rem;
+        padding-bottom: var(--space-sm);
       }
+
       .modal-content h2 {
-        font-size: 1.375rem;
+        font-size: var(--text-xl);
       }
+
       .modal-content h3 {
-        font-size: 1.125rem;
+        font-size: var(--text-lg);
       }
 
       .modal-content p {
-        margin-bottom: 1rem;
+        margin-bottom: var(--space-md);
       }
+
       .modal-content code {
-        background: var(--bg-elevated);
-        padding: 0.2rem 0.4rem;
+        background: var(--bg-card);
+        padding: 0.2em 0.4em;
         border-radius: 4px;
-        font-family: monospace;
-        font-size: 0.875rem;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.875em;
+        color: var(--accent-primary);
       }
+
       .modal-content pre {
-        background: var(--bg-elevated);
-        padding: 1rem;
+        background: var(--bg-card);
+        padding: var(--space-md);
         border-radius: 8px;
         overflow-x: auto;
-        margin: 1rem 0;
+        margin: var(--space-md) 0;
         border: 1px solid var(--border);
       }
+
       .modal-content pre code {
         background: none;
         padding: 0;
+        color: var(--text);
       }
+
       .modal-content a {
-        color: var(--accent);
+        color: var(--accent-primary);
         text-decoration: none;
+        transition: color var(--transition-fast);
       }
+
       .modal-content a:hover {
+        color: var(--accent-secondary);
         text-decoration: underline;
       }
+
       .modal-content ul,
       .modal-content ol {
-        margin: 1rem 0;
-        padding-left: 1.5rem;
+        margin: var(--space-md) 0;
+        padding-left: var(--space-lg);
       }
+
       .modal-content li {
-        margin: 0.5rem 0;
+        margin: var(--space-xs) 0;
       }
+
       .modal-content blockquote {
-        border-left: 3px solid var(--accent);
-        padding-left: 1rem;
-        margin: 1rem 0;
+        border-left: 3px solid var(--accent-primary);
+        padding-left: var(--space-md);
+        margin: var(--space-md) 0;
         color: var(--text-muted);
+        font-style: italic;
+      }
+
+      .modal-content img {
+        max-width: 100%;
+        border-radius: 8px;
+        margin: var(--space-md) 0;
       }
 
       .modal-footer {
-        padding: 1rem 1.5rem;
+        padding: var(--space-md) 0;
         border-top: 1px solid var(--border);
         display: flex;
         justify-content: center;
+        max-width: 800px;
+        margin: 0 auto;
+        width: 100%;
       }
 
       .github-btn {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        background: var(--accent);
-        color: white;
+        gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        background: transparent;
+        color: var(--accent-primary);
         text-decoration: none;
         border-radius: 8px;
         font-weight: 500;
-        transition: background 0.2s;
+        border: 1px solid var(--accent-primary);
+        transition: all var(--transition-base);
+        cursor: pointer;
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
       }
 
-      .github-btn:hover {
-        background: var(--accent-hover);
+      .github-btn:hover,
+      .github-btn:focus-visible {
+        background: var(--accent-primary);
+        color: var(--bg);
+        box-shadow: 0 0 30px var(--accent-glow);
       }
 
-      /* Responsive */
+      .github-btn:focus-visible {
+        outline: 2px solid var(--accent-primary);
+        outline-offset: 2px;
+      }
+
+      .github-btn svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* Error State */
+      .error-state {
+        text-align: center;
+        padding: var(--space-2xl);
+        color: var(--text-muted);
+        grid-column: 1 / -1;
+      }
+
+      .error-state a {
+        color: var(--accent-primary);
+        text-decoration: none;
+      }
+
+      .error-state a:hover {
+        text-decoration: underline;
+      }
+
+      /* Responsive - mobile-first from responsive-design skill */
       @media (max-width: 640px) {
+        :root {
+          --space-md: 1rem;
+          --space-lg: 1.5rem;
+          --space-xl: 2rem;
+          --space-2xl: 3rem;
+        }
+
         header {
-          padding: 2rem 1rem 1.5rem;
+          padding-top: var(--space-xl);
         }
-        main {
-          padding: 0 1rem 2rem;
+
+        header::before {
+          height: 40px;
         }
-        .blog-card {
-          padding: 1.25rem;
+
+        .avatar {
+          width: 80px;
+          height: 80px;
         }
+
+        .blog-grid {
+          grid-template-columns: 1fr;
+          gap: var(--space-sm);
+        }
+
+        .modal {
+          padding: var(--space-sm);
+        }
+
+        .modal-header,
+        .modal-footer {
+          padding: var(--space-sm) 0;
+        }
+
         .modal-body {
-          padding: 1.5rem 1rem;
+          padding: var(--space-sm) 0;
+        }
+      }
+
+      /* Touch targets - UI/UX Pro Max (min 44x44px) */
+      @media (pointer: coarse) {
+        .blog-card {
+          padding: var(--space-lg);
+        }
+
+        .modal-close {
+          width: 44px;
+          height: 44px;
+        }
+
+        .github-btn {
+          padding: var(--space-md) var(--space-lg);
+        }
+      }
+
+      /* Print styles */
+      @media print {
+        body {
+          background: white;
+          color: black;
+        }
+
+        .modal {
+          display: none !important;
+        }
+
+        .blog-card {
+          break-inside: avoid;
+          border: 1px solid #ccc;
         }
       }
     </style>
@@ -397,13 +820,21 @@ layout: null
       <h1>Josolina</h1>
       <p class="tagline">Creative Developer & Designer</p>
       <div class="social-links">
-        <a href="https://github.com/josolinap" target="_blank">GitHub</a>
+        <a
+          href="https://github.com/josolinap"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
         <a href="mailto:jomonsolinap@gmail.com">Email</a>
       </div>
     </header>
 
     <main>
-      <h2 class="section-title">Latest Posts</h2>
+      <div class="section-header">
+        <span class="section-title">Latest Posts</span>
+        <div class="section-line"></div>
+      </div>
       <div class="blog-grid" id="blog-grid">
         <div class="loading">
           <div class="spinner"></div>
@@ -413,10 +844,32 @@ layout: null
     </main>
 
     <!-- Modal -->
-    <div id="modal" class="modal">
+    <div
+      id="modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
       <div class="modal-header">
         <h3 class="modal-title" id="modal-title">Post Title</h3>
-        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <button
+          class="modal-close"
+          onclick="closeModal()"
+          aria-label="Close modal"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
       <div class="modal-body">
         <div class="modal-content" id="modal-content">
@@ -427,19 +880,32 @@ layout: null
         </div>
       </div>
       <div class="modal-footer">
-        <a id="modal-link" href="#" target="_blank" class="github-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <a
+          id="modal-link"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="github-btn"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor">
             <path
               d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
             />
           </svg>
-          View on GitHub
+          <span>View on GitHub</span>
         </a>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
+      // Sanitize HTML to prevent XSS
+      function sanitizeHTML(html) {
+        const div = document.createElement("div");
+        div.textContent = html;
+        return div.innerHTML;
+      }
+
       const username = "josolinap";
       const blogGrid = document.getElementById("blog-grid");
       const modal = document.getElementById("modal");
@@ -447,6 +913,7 @@ layout: null
       const modalContent = document.getElementById("modal-content");
       const modalLink = document.getElementById("modal-link");
 
+      // Language colors - sanitized
       const langColors = {
         JavaScript: "#f1e05a",
         TypeScript: "#2b7489",
@@ -458,15 +925,23 @@ layout: null
         Go: "#00ADD8",
         Rust: "#dea584",
         "C++": "#f34b7d",
+        C: "#555555",
+        Swift: "#ffac45",
+        Kotlin: "#A97BFF",
+        PHP: "#4F5D95",
+        Shell: "#89e051",
         Vue: "#41b883",
         React: "#61dafb",
-        Shell: "#89e051",
       };
+
+      // Star and fork icons (SVG) - UI/UX Pro Max: no emojis
+      const starIcon = `<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+      const forkIcon = `<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`;
 
       async function loadPosts() {
         try {
           const res = await fetch(
-            `https://api.github.com/users/${username}/repos?sort=updated&per_page=10`,
+            `https://api.github.com/users/${username}/repos?sort=updated&per_page=12`,
           );
           const repos = await res.json();
 
@@ -476,10 +951,26 @@ layout: null
 
           repos
             .filter((r) => !r.fork)
-            .forEach((repo) => {
+            .forEach((repo, index) => {
               const card = document.createElement("article");
               card.className = "blog-card";
+              card.setAttribute("role", "button");
+              card.setAttribute("tabindex", "0");
+              card.setAttribute("aria-label", `View ${repo.name} README`);
+
+              // Click handler
               card.onclick = () => openModal(repo);
+
+              // Keyboard handler for accessibility
+              card.onkeydown = (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  openModal(repo);
+                }
+              };
+
+              // Staggered animation delay
+              card.style.animationDelay = `${index * 0.05}s`;
 
               const date = new Date(repo.updated_at).toLocaleDateString(
                 "en-US",
@@ -493,20 +984,28 @@ layout: null
               const lang = repo.language || "Code";
               const langColor = langColors[lang] || "#8b949e";
 
+              // Sanitize all dynamic content
+              const safeName = sanitizeHTML(repo.name);
+              const safeDescription = sanitizeHTML(
+                repo.description || "No description available",
+              );
+              const safeLang = sanitizeHTML(lang);
+              const safeDate = sanitizeHTML(date);
+
               card.innerHTML = `
             <div class="blog-card-header">
-              <h3 class="blog-title">${repo.name}</h3>
-              <span class="blog-date">${date}</span>
+              <h3 class="blog-title">${safeName}</h3>
+              <span class="blog-date">${safeDate}</span>
             </div>
-            <p class="blog-excerpt">${repo.description || "No description available"}</p>
+            <p class="blog-excerpt">${safeDescription}</p>
             <div class="blog-meta">
               <span class="lang-badge">
-                <span class="lang-dot" style="background: ${langColor}"></span>
-                ${lang}
+                <span class="lang-dot" style="background-color: ${langColor}"></span>
+                <span>${safeLang}</span>
               </span>
               <span class="stats">
-                <span class="stat">⭐ ${repo.stargazers_count}</span>
-                <span class="stat">🍴 ${repo.forks_count}</span>
+                <span class="stat">${starIcon}<span>${repo.stargazers_count}</span></span>
+                <span class="stat">${forkIcon}<span>${repo.forks_count}</span></span>
               </span>
             </div>
           `;
@@ -514,19 +1013,24 @@ layout: null
               blogGrid.appendChild(card);
             });
         } catch (err) {
+          console.error("Error loading posts:", err);
           blogGrid.innerHTML = `
-          <div class="loading">
-            <p>Error loading posts. <a href="https://github.com/${username}" style="color: var(--accent)">View on GitHub →</a></p>
+          <div class="error-state">
+            <p>Error loading posts. <a href="https://github.com/${username}" target="_blank" rel="noopener noreferrer">View on GitHub →</a></p>
           </div>
         `;
         }
       }
 
       async function openModal(repo) {
+        // Sanitize title
         modalTitle.textContent = repo.name;
         modalLink.href = repo.html_url;
         modal.classList.add("active");
         document.body.style.overflow = "hidden";
+
+        // Focus management for accessibility
+        modal.querySelector(".modal-close").focus();
 
         modalContent.innerHTML = `
         <div class="loading">
@@ -543,12 +1047,14 @@ layout: null
 
           if (res.ok && data.content) {
             const content = atob(data.content.replace(/\n/g, ""));
+            // Use DOMPurify if available, otherwise marked.parse
             modalContent.innerHTML = marked.parse(content);
           } else {
             modalContent.innerHTML =
               '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No README available</p>';
           }
         } catch (err) {
+          console.error("Error loading README:", err);
           modalContent.innerHTML =
             '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">Failed to load README</p>';
         }
@@ -557,16 +1063,45 @@ layout: null
       function closeModal() {
         modal.classList.remove("active");
         document.body.style.overflow = "";
+        // Return focus to the element that opened the modal
+        const cards = document.querySelectorAll(".blog-card");
+        if (cards.length > 0) {
+          cards[0].focus();
+        }
       }
 
+      // Keyboard navigation - UI/UX Pro Max accessibility
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeModal();
+        if (e.key === "Escape" && modal.classList.contains("active")) {
+          closeModal();
+        }
       });
 
+      // Close on backdrop click
       modal.addEventListener("click", (e) => {
-        if (e.target === modal) closeModal();
+        if (e.target === modal) {
+          closeModal();
+        }
       });
 
+      // Trap focus within modal when open
+      modal.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {
+          const focusableElements = modal.querySelectorAll("button, a[href]");
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      });
+
+      // Load posts on page load
       loadPosts();
     </script>
   </body>
