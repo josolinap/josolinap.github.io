@@ -5,18 +5,43 @@
       .block-cyan { fill: #00f0ff; }
       .block-purple { fill: #8338ec; }
       .block-pink { fill: #ff006e; }
+      
+      @keyframes pulse {
+        0%, 100% { opacity: 0.3; transform: scale(0.9); }
+        50% { opacity: 1; transform: scale(1); }
+      }
+      
+      @keyframes glow {
+        0%, 100% { filter: drop-shadow(0 0 0px currentColor); }
+        50% { filter: drop-shadow(0 0 2px currentColor); }
+      }
+      
+      .block-1 { animation: pulse 2s ease-in-out infinite 0s; }
+      .block-2 { animation: pulse 2s ease-in-out infinite 0.3s; }
+      .block-3 { animation: pulse 2s ease-in-out infinite 0.6s; }
+      .block-4 { animation: pulse 2s ease-in-out infinite 0.9s; }
+      .block-5 { animation: pulse 2s ease-in-out infinite 1.2s; }
+      .block-6 { animation: pulse 2s ease-in-out infinite 1.5s; }
+      
+      @media (prefers-reduced-motion: reduce) {
+        .block-1, .block-2, .block-3, .block-4, .block-5, .block-6 {
+          animation: none;
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
     </style>
   </defs>
   
   <rect class="bg" width="32" height="32"/>
   
-  <!-- Letter J with random block colors -->
+  <!-- Letter J with animated blocks -->
   <!-- Vertical stem -->
-  <rect class="block-cyan" x="20" y="2" width="6" height="6"/>
-  <rect class="block-purple" x="20" y="8" width="6" height="6"/>
-  <rect class="block-pink" x="20" y="14" width="6" height="6"/>
-  <rect class="block-cyan" x="20" y="20" width="6" height="6"/>
+  <rect class="block-1 block-cyan" x="20" y="2" width="6" height="6"/>
+  <rect class="block-2 block-purple" x="20" y="8" width="6" height="6"/>
+  <rect class="block-3 block-pink" x="20" y="14" width="6" height="6"/>
+  <rect class="block-4 block-cyan" x="20" y="20" width="6" height="6"/>
   <!-- Hook/base -->
-  <rect class="block-purple" x="14" y="20" width="6" height="6"/>
-  <rect class="block-pink" x="8" y="20" width="6" height="6"/>
+  <rect class="block-5 block-purple" x="14" y="20" width="6" height="6"/>
+  <rect class="block-6 block-pink" x="8" y="20" width="6" height="6"/>
 </svg>
