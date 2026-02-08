@@ -2,61 +2,55 @@
   <defs>
     <style>
       .bg { fill: #050505; }
-      .block-cyan { fill: #00f0ff; }
-      .block-purple { fill: #8338ec; }
+      .letter-j { fill: #00f0ff; }
+      .letter-s { fill: #8338ec; }
       
-      @keyframes j-cycle {
-        0%, 8% { opacity: 0; transform: translateY(-2px); }
-        15%, 48% { opacity: 1; transform: translateY(0); }
-        55%, 100% { opacity: 0; }
+      @keyframes cycle {
+        0%, 45% { opacity: 1; }
+        50%, 95% { opacity: 0; }
+        100% { opacity: 1; }
       }
       
-      @keyframes s-cycle {
-        0%, 55% { opacity: 0; transform: translateY(-2px); }
-        62%, 95% { opacity: 1; transform: translateY(0); }
-        100% { opacity: 0; }
-      }
-      
-      .letter-j { animation: j-cycle 3s ease-in-out infinite; }
-      .letter-s { animation: s-cycle 3s ease-in-out infinite; }
+      .j-group { animation: cycle 3s ease-in-out infinite; }
+      .s-group { animation: cycle 3s ease-in-out infinite reverse; }
       
       @media (prefers-reduced-motion: reduce) {
-        .letter-j, .letter-s { animation: none; }
-        .letter-j { opacity: 1; }
-        .letter-s { opacity: 0; }
+        .j-group, .s-group { animation: none; }
+        .j-group { opacity: 1; }
+        .s-group { opacity: 0; }
       }
     </style>
   </defs>
   
   <rect class="bg" width="32" height="32"/>
   
-  <!-- Letter J (cyan) -->
-  <g class="letter-j">
-    <rect class="block-cyan" x="18" y="2" width="6" height="5"/>
-    <rect class="block-cyan" x="18" y="7" width="6" height="5"/>
-    <rect class="block-cyan" x="18" y="12" width="6" height="5"/>
-    <rect class="block-cyan" x="18" y="17" width="6" height="5"/>
-    <rect class="block-cyan" x="12" y="17" width="6" height="5"/>
-    <rect class="block-cyan" x="6" y="17" width="6" height="5"/>
+  <!-- Letter J -->
+  <g class="j-group">
+    <!-- Vertical line -->
+    <rect class="letter-j" x="20" y="4" width="6" height="5"/>
+    <rect class="letter-j" x="20" y="9" width="6" height="5"/>
+    <rect class="letter-j" x="20" y="14" width="6" height="5"/>
+    <rect class="letter-j" x="20" y="19" width="6" height="5"/>
+    <!-- Hook -->
+    <rect class="letter-j" x="14" y="19" width="6" height="5"/>
+    <rect class="letter-j" x="8" y="19" width="6" height="5"/>
   </g>
   
-  <!-- Letter S (purple) - clearer S shape -->
-  <g class="letter-s">
-    <!-- Top -->
-    <rect class="block-purple" x="8" y="2" width="6" height="5"/>
-    <rect class="block-purple" x="14" y="2" width="6" height="5"/>
-    <rect class="block-purple" x="20" y="2" width="6" height="5"/>
-    <!-- Down on left -->
-    <rect class="block-purple" x="8" y="7" width="6" height="5"/>
-    <!-- Middle -->
-    <rect class="block-purple" x="14" y="7" width="6" height="5"/>
-    <rect class="block-purple" x="20" y="7" width="6" height="5"/>
-    <!-- Down on right -->
-    <rect class="block-purple" x="20" y="12" width="6" height="5"/>
-    <!-- Bottom -->
-    <rect class="block-purple" x="8" y="12" width="6" height="5"/>
-    <rect class="block-purple" x="14" y="12" width="6" height="5"/>
-    <!-- Extra bottom block for visibility -->
-    <rect class="block-purple" x="8" y="17" width="6" height="5"/>
+  <!-- Letter S -->
+  <g class="s-group">
+    <!-- Top curve -->
+    <rect class="letter-s" x="6" y="4" width="6" height="5"/>
+    <rect class="letter-s" x="12" y="4" width="6" height="5"/>
+    <rect class="letter-s" x="18" y="4" width="6" height="5"/>
+    <!-- Middle diagonal -->
+    <rect class="letter-s" x="6" y="9" width="6" height="5"/>
+    <rect class="letter-s" x="12" y="9" width="6" height="5"/>
+    <rect class="letter-s" x="18" y="9" width="6" height="5"/>
+    <!-- Bottom curve -->
+    <rect class="letter-s" x="6" y="14" width="6" height="5"/>
+    <rect class="letter-s" x="12" y="14" width="6" height="5"/>
+    <rect class="letter-s" x="18" y="14" width="6" height="5"/>
+    <!-- Extra bottom -->
+    <rect class="letter-s" x="6" y="19" width="6" height="5"/>
   </g>
 </svg>
