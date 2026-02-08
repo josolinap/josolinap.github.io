@@ -5,65 +5,58 @@
       .block-cyan { fill: #00f0ff; }
       .block-purple { fill: #8338ec; }
       
-      /* J Animation - appears first, clears, then S comes */
       @keyframes j-cycle {
-        0%, 5% { opacity: 0; transform: translateY(-4px); }
-        10%, 40% { opacity: 1; transform: translateY(0); }
-        45%, 50% { opacity: 0; transform: translateY(0); }
+        0%, 8% { opacity: 0; transform: translateY(-2px); }
+        15%, 48% { opacity: 1; transform: translateY(0); }
         55%, 100% { opacity: 0; }
       }
       
-      /* S Animation - appears after J clears */
       @keyframes s-cycle {
-        0%, 50% { opacity: 0; transform: translateY(-4px); }
-        55%, 90% { opacity: 1; transform: translateY(0); }
-        95%, 100% { opacity: 0; transform: translateY(0); }
+        0%, 55% { opacity: 0; transform: translateY(-2px); }
+        62%, 95% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; }
       }
       
-      .letter-j { animation: j-cycle 4s ease-in-out infinite; }
-      .letter-s { animation: s-cycle 4s ease-in-out infinite; }
+      .letter-j { animation: j-cycle 3s ease-in-out infinite; }
+      .letter-s { animation: s-cycle 3s ease-in-out infinite; }
       
       @media (prefers-reduced-motion: reduce) {
-        .letter-j, .letter-s {
-          animation: none;
-          opacity: 1;
-        }
+        .letter-j, .letter-s { animation: none; }
+        .letter-j { opacity: 1; }
         .letter-s { opacity: 0; }
       }
     </style>
   </defs>
   
-  <!-- Background -->
   <rect class="bg" width="32" height="32"/>
   
-  <!-- Letter J (made of blocks) -->
+  <!-- Letter J (cyan) -->
   <g class="letter-j">
-    <!-- Vertical line of J -->
-    <rect class="block-cyan" x="20" y="2" width="6" height="6"/>
-    <rect class="block-cyan" x="20" y="8" width="6" height="6"/>
-    <rect class="block-cyan" x="20" y="14" width="6" height="6"/>
-    <rect class="block-cyan" x="20" y="20" width="6" height="6"/>
-    <!-- Hook of J -->
-    <rect class="block-cyan" x="14" y="20" width="6" height="6"/>
-    <rect class="block-cyan" x="8" y="20" width="6" height="6"/>
+    <rect class="block-cyan" x="18" y="2" width="6" height="5"/>
+    <rect class="block-cyan" x="18" y="7" width="6" height="5"/>
+    <rect class="block-cyan" x="18" y="12" width="6" height="5"/>
+    <rect class="block-cyan" x="18" y="17" width="6" height="5"/>
+    <rect class="block-cyan" x="12" y="17" width="6" height="5"/>
+    <rect class="block-cyan" x="6" y="17" width="6" height="5"/>
   </g>
   
-  <!-- Letter S (made of blocks) -->
+  <!-- Letter S (purple) - clearer S shape -->
   <g class="letter-s">
-    <!-- Top bar of S -->
-    <rect class="block-purple" x="8" y="2" width="6" height="6"/>
-    <rect class="block-purple" x="14" y="2" width="6" height="6"/>
-    <rect class="block-purple" x="20" y="2" width="6" height="6"/>
-    <!-- Middle of S -->
-    <rect class="block-purple" x="8" y="8" width="6" height="6"/>
-    <rect class="block-purple" x="14" y="8" width="6" height="6"/>
-    <rect class="block-purple" x="20" y="8" width="6" height="6"/>
-    <!-- Bottom bar of S -->
-    <rect class="block-purple" x="8" y="14" width="6" height="6"/>
-    <rect class="block-purple" x="14" y="14" width="6" height="6"/>
-    <rect class="block-purple" x="20" y="14" width="6" height="6"/>
-    <!-- Lower part of S -->
-    <rect class="block-purple" x="8" y="20" width="6" height="6"/>
-    <rect class="block-purple" x="14" y="20" width="6" height="6"/>
+    <!-- Top -->
+    <rect class="block-purple" x="8" y="2" width="6" height="5"/>
+    <rect class="block-purple" x="14" y="2" width="6" height="5"/>
+    <rect class="block-purple" x="20" y="2" width="6" height="5"/>
+    <!-- Down on left -->
+    <rect class="block-purple" x="8" y="7" width="6" height="5"/>
+    <!-- Middle -->
+    <rect class="block-purple" x="14" y="7" width="6" height="5"/>
+    <rect class="block-purple" x="20" y="7" width="6" height="5"/>
+    <!-- Down on right -->
+    <rect class="block-purple" x="20" y="12" width="6" height="5"/>
+    <!-- Bottom -->
+    <rect class="block-purple" x="8" y="12" width="6" height="5"/>
+    <rect class="block-purple" x="14" y="12" width="6" height="5"/>
+    <!-- Extra bottom block for visibility -->
+    <rect class="block-purple" x="8" y="17" width="6" height="5"/>
   </g>
 </svg>
